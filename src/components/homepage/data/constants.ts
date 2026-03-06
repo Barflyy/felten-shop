@@ -1,0 +1,152 @@
+import type { CategoryItem, Review, RatingDistribution } from './types';
+
+export const CATEGORIES: CategoryItem[] = [
+  {
+    name: 'Outils électroportatifs',
+    subtitle: 'Perceuses, visseuses, meuleuses...',
+    handle: 'outils-electroportatifs',
+    image: '/categories/outils-electroportatifs.png',
+    count: 186,
+  },
+  {
+    name: 'Batteries & Chargeurs',
+    subtitle: 'M12, M18, MX FUEL',
+    handle: 'batteries-chargeurs-et-generateurs',
+    image: '/categories/batteries-chargeurs.png',
+    count: 74,
+  },
+  {
+    name: 'Aspirateurs',
+    subtitle: 'Chantier & atelier',
+    handle: 'aspirateurs',
+    image: '/categories/aspirateurs.png',
+    count: 32,
+  },
+  {
+    name: 'Éclairage',
+    subtitle: 'Projecteurs & lampes',
+    handle: 'eclairage',
+    image: '/categories/eclairage.png',
+    count: 28,
+  },
+  {
+    name: 'Instruments de mesure',
+    subtitle: 'Lasers, détecteurs, mètres',
+    handle: 'instruments-de-mesure',
+    image: '/categories/instruments-mesure.png',
+    count: 45,
+  },
+  {
+    name: 'EPI & Vêtements',
+    subtitle: 'Protection & confort',
+    handle: 'epi-vetements',
+    image: '/categories/epi.png',
+    count: 38,
+  },
+  {
+    name: 'Extérieurs & Espaces verts',
+    subtitle: 'Taille-haies, souffleurs...',
+    handle: 'exterieurs-et-espaces-verts',
+    image: '/categories/exterieurs-espaces-verts.png',
+    count: 41,
+  },
+  {
+    name: 'Assainissement',
+    subtitle: 'Déboucheurs & inspection',
+    handle: 'assainissement-et-nettoyage',
+    image: '/categories/assainissement.png',
+    count: 22,
+  },
+];
+
+export const REVIEWS: Review[] = [
+  {
+    name: 'Jean-Marc D.',
+    job: 'Électricien indépendant',
+    city: 'Liège',
+    rating: 5,
+    text: "J'ai commandé une perceuse M12 FUEL et reçu le lendemain matin. La garantie 3 ans enregistrée automatiquement, c'est un vrai plus.",
+    product: 'Perceuse M12 FUEL',
+    source: 'Google',
+    date: 'il y a 2 semaines',
+    verified: true,
+  },
+  {
+    name: 'Thomas V.',
+    job: 'Chef de chantier',
+    city: 'Bruxelles',
+    rating: 5,
+    text: "45 Nm de couple, mandrin 13mm — j'ai trouvé exactement ce qu'il me fallait grâce aux fiches techniques détaillées. Livré en 24h comme promis.",
+    product: 'Visseuse à chocs M18',
+    source: 'Trustpilot',
+    date: 'il y a 3 semaines',
+    verified: true,
+  },
+  {
+    name: 'Pierre M.',
+    job: 'Plombier',
+    city: 'Namur',
+    rating: 5,
+    text: 'SAV impeccable. Ma meuleuse est tombée en panne, ils sont venus la chercher, réparée et retournée en 4 jours. Service pro.',
+    product: 'Meuleuse M18 FUEL',
+    source: 'Google',
+    date: 'il y a 1 mois',
+    verified: true,
+  },
+  {
+    name: 'Laurent B.',
+    job: 'Artisan maçon',
+    city: 'Charleroi',
+    rating: 5,
+    text: "Le conseil technique avant achat m'a fait gagner du temps. Ils connaissent vraiment chaque outil. Commande parfaite.",
+    product: 'Perforateur SDS-Plus',
+    source: 'Google',
+    date: 'il y a 1 mois',
+    verified: true,
+  },
+  {
+    name: 'Sébastien K.',
+    job: 'Menuisier',
+    city: 'Luxembourg',
+    rating: 5,
+    text: 'Achat pro avec TVA correctement gérée, livraison rapide, produit Milwaukee de qualité. Je recommande sans hésiter.',
+    product: 'Scie circulaire M18',
+    source: 'Trustpilot',
+    date: 'il y a 2 mois',
+    verified: true,
+  },
+  {
+    name: 'Frédéric N.',
+    job: 'Paysagiste indépendant',
+    city: 'Arlon',
+    rating: 5,
+    text: 'Le système M18 FUEL est une révolution pour mon activité. Achetés ici avec tous les conseils nécessaires.',
+    product: 'Taille-haies M18 FUEL',
+    source: 'Google',
+    date: 'il y a 2 mois',
+    verified: true,
+  },
+];
+
+export const RATING_DISTRIBUTION: RatingDistribution[] = [
+  { stars: 5, percent: 87 },
+  { stars: 4, percent: 9 },
+  { stars: 3, percent: 3 },
+  { stars: 2, percent: 1 },
+  { stars: 1, percent: 0 },
+];
+
+export const BESTSELLER_TABS = [
+  { key: 'tous', label: 'TOUS' },
+  { key: 'perceuses', label: 'PERCEUSES' },
+  { key: 'visseuses', label: 'VISSEUSES' },
+  { key: 'meuleuses', label: 'MEULEUSES' },
+  { key: 'batteries', label: 'BATTERIES' },
+] as const;
+
+export const SEARCH_PLACEHOLDERS = [
+  'Rechercher un produit...',
+  'Perceuse M18 FUEL...',
+  'Batterie 5Ah...',
+  'Meuleuse 125mm...',
+];

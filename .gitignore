@@ -51,7 +51,7 @@ milwaukee_specs_results.json
 dev-server.log
 scraper/
 categories/
-data/
+/data/
 images/
 "images variantes/"
 screenshots/
