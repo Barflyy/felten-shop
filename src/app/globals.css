@@ -52,9 +52,9 @@ h1, h2 {
   font-family: var(--font-display), var(--font-inter), sans-serif;
 }
 
-/* Smooth scrolling */
+/* Smooth scrolling — only for in-page anchor jumps, not SPA navigations */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Selection color */
