@@ -27,7 +27,7 @@ export default async function CollectionPage({ params }: Props) {
   const { handle } = await params;
   // Try the exact handle first, then with -1 / -2 suffixes (legacy Shopify handles)
   const [initialProducts, menu] = await Promise.all([
-    getCollectionProducts({ collection: handle, first: 50 }),
+    getCollectionProducts({ collection: handle }),
     getMenu('produits'),
   ]);
   let products = initialProducts;
@@ -35,7 +35,7 @@ export default async function CollectionPage({ params }: Props) {
 
   if (products.length === 0 && handle !== 'all') {
     for (const suffix of ['-1', '-2']) {
-      const attempt = await getCollectionProducts({ collection: handle + suffix, first: 50 });
+      const attempt = await getCollectionProducts({ collection: handle + suffix });
       if (attempt.length > 0) {
         products = attempt;
         resolvedHandle = handle + suffix;

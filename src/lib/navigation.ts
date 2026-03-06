@@ -275,7 +275,7 @@ export const mainNavigation: MenuItem[] = [
   },
   {
     id: 'assainissement',
-    title: 'Assainissement et nettoyage des canalisations',
+    title: 'Assainissement & canalisations',
     url: '/collections/assainissement-et-nettoyage',
     image: '/categories/assainissement.png',
     items: [

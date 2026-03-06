@@ -32,7 +32,7 @@ export default async function SubCategoryPage({ params }: Props) {
   const { categorie, souscategorie } = await params;
 
   const [initialProducts, menu] = await Promise.all([
-    getCollectionProducts({ collection: souscategorie, first: 50 }),
+    getCollectionProducts({ collection: souscategorie }),
     getMenu('produits'),
   ]);
 
@@ -41,7 +41,7 @@ export default async function SubCategoryPage({ params }: Props) {
 
   if (products.length === 0) {
     for (const suffix of ['-1', '-2']) {
-      const attempt = await getCollectionProducts({ collection: souscategorie + suffix, first: 50 });
+      const attempt = await getCollectionProducts({ collection: souscategorie + suffix });
       if (attempt.length > 0) {
         products = attempt;
         resolvedHandle = souscategorie + suffix;

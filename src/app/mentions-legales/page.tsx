@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Mentions Légales — Felten Shop',
-  description: 'Mentions légales du site Felten Shop, revendeur agréé Milwaukee en Belgique.',
+  description: 'Mentions légales du site Felten Shop, revendeur agréé Milwaukee au Luxembourg.',
 };
 
 export default function MentionsLegalesPage() {
@@ -36,19 +36,18 @@ export default function MentionsLegalesPage() {
             </h2>
             <div className="prose prose-sm max-w-none text-[#1A1A1A]/70 leading-relaxed space-y-2">
               <p><strong className="text-[#1A1A1A] font-semibold">Raison sociale :</strong> Felten Shop SPRL</p>
-              <p><strong className="text-[#1A1A1A] font-semibold">Pays d&apos;établissement :</strong> Belgique</p>
-              <p><strong className="text-[#1A1A1A] font-semibold">Numéro BCE :</strong> BE 0XXX.XXX.XXX</p>
-              <p><strong className="text-[#1A1A1A] font-semibold">Numéro de TVA :</strong> BE 0XXX.XXX.XXX</p>
+              <p><strong className="text-[#1A1A1A] font-semibold">Siège social :</strong> Bei der Kapell 10, L-9775 Weicherdange, Luxembourg</p>
+              <p><strong className="text-[#1A1A1A] font-semibold">Numéro de TVA :</strong> LU17345482</p>
               <p>
                 <strong className="text-[#1A1A1A] font-semibold">Email :</strong>{' '}
-                <a href="mailto:contact@shopfelten.be" className="text-[#DB021D] hover:underline">
-                  contact@shopfelten.be
+                <a href="mailto:florian@felten.lu" className="text-[#DB021D] hover:underline">
+                  florian@felten.lu
                 </a>
               </p>
               <p>
                 <strong className="text-[#1A1A1A] font-semibold">Téléphone :</strong>{' '}
-                <a href="tel:+32XXXXXXXXX" className="text-[#DB021D] hover:underline">
-                  +32 XX XXX XX XX
+                <a href="tel:+352621304952" className="text-[#DB021D] hover:underline">
+                  +352 621 304 952
                 </a>
               </p>
               <p><strong className="text-[#1A1A1A] font-semibold">Directeur de la publication :</strong> Gérant de Felten Shop SPRL</p>

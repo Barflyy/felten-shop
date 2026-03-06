@@ -8,6 +8,7 @@ import {
   MapPin,
   ChevronDown,
   Globe,
+  Instagram,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -131,32 +132,52 @@ export function Footer() {
               </motion.span>
             </Link>
             <p className="text-[12px] text-white/40 leading-relaxed mb-4">
-              Revendeur Agréé Milwaukee en Belgique. Garantie 3 ans, SAV premium.
+              Revendeur Agréé Milwaukee au Luxembourg. Garantie 3 ans, SAV premium.
             </p>
             <ul className="space-y-2">
               <li>
                 <a
-                  href="tel:+32XXXXXXXXX"
+                  href="tel:+352621304952"
                   className="flex items-center gap-2 text-[12px] text-white/40 hover:text-[#DB021D] transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5 text-[#DB021D] flex-shrink-0" strokeWidth={2} />
-                  +32 XX XXX XX XX
+                  +352 621 304 952
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:contact@shopfelten.be"
+                  href="mailto:florian@felten.lu"
                   className="flex items-center gap-2 text-[12px] text-white/40 hover:text-[#DB021D] transition-colors"
                 >
                   <Mail className="w-3.5 h-3.5 text-[#DB021D] flex-shrink-0" strokeWidth={2} />
-                  contact@shopfelten.be
+                  florian@felten.lu
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-[12px] text-white/40">
-                <MapPin className="w-3.5 h-3.5 text-[#DB021D] flex-shrink-0" strokeWidth={2} />
-                Belgique
+              <li className="flex items-start gap-2 text-[12px] text-white/40">
+                <MapPin className="w-3.5 h-3.5 text-[#DB021D] flex-shrink-0 mt-0.5" strokeWidth={2} />
+                Bei der Kapell 10, L-9775 Weicherdange
               </li>
             </ul>
+            <div className="flex items-center gap-4 mt-4">
+              <a
+                href="https://www.instagram.com/feltenshop/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[12px] text-white/40 hover:text-[#DB021D] transition-colors"
+              >
+                <Instagram className="w-4 h-4" strokeWidth={2} />
+                @feltenshop
+              </a>
+              <a
+                href="https://felten.lu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[12px] text-white/40 hover:text-[#DB021D] transition-colors"
+              >
+                <Globe className="w-4 h-4" strokeWidth={2} />
+                felten.lu
+              </a>
+            </div>
           </div>
 
           {/* Col 2 — Catalogue */}
@@ -266,16 +287,34 @@ export function Footer() {
               </motion.span>
             </Link>
             <p className="text-xs text-white/50 mb-4">
-              Revendeur Agréé Milwaukee en Belgique
+              Revendeur Agréé Milwaukee au Luxembourg
             </p>
             <div className="flex items-center justify-center gap-5">
-              <a href="tel:+32XXXXXXXXX" className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-[#DB021D] transition-colors">
+              <a href="tel:+352621304952" className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-[#DB021D] transition-colors">
                 <Phone className="w-3.5 h-3.5 text-[#DB021D]" strokeWidth={2} />
                 Appeler
               </a>
-              <a href="mailto:contact@shopfelten.be" className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-[#DB021D] transition-colors">
+              <a href="mailto:florian@felten.lu" className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-[#DB021D] transition-colors">
                 <Mail className="w-3.5 h-3.5 text-[#DB021D]" strokeWidth={2} />
                 Email
+              </a>
+              <a
+                href="https://www.instagram.com/feltenshop/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-[#DB021D] transition-colors"
+              >
+                <Instagram className="w-3.5 h-3.5 text-[#DB021D]" strokeWidth={2} />
+                Instagram
+              </a>
+              <a
+                href="https://felten.lu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-[#DB021D] transition-colors"
+              >
+                <Globe className="w-3.5 h-3.5 text-[#DB021D]" strokeWidth={2} />
+                felten.lu
               </a>
             </div>
           </div>

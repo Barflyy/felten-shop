@@ -48,62 +48,45 @@ export function SortDrawer({ isOpen, onClose, currentSort, onSortChange }: SortD
             onClick={onClose}
           />
 
-          {/* Bottom Sheet — 40% height */}
+          {/* Bottom Sheet */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="fixed left-0 right-0 bottom-0 bg-white z-[60] rounded-t-2xl shadow-2xl"
-            style={{ maxHeight: '40vh' }}
+            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed left-0 right-0 bottom-0 bg-white z-[60] rounded-t-xl"
           >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full bg-gray-300" />
-            </div>
-
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pb-3 border-b border-gray-100">
-              <h2 className="text-[16px] font-bold text-[#1A1A1A]">Trier par</h2>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+              <h2 className="text-[15px] font-bold text-[#1A1A1A]">Trier par</h2>
               <button
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
                 aria-label="Fermer"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4 text-[#9CA3AF]" />
               </button>
             </div>
 
             {/* Sort Options */}
-            <div className="py-1 overflow-y-auto" style={{ maxHeight: 'calc(40vh - 80px)' }}>
+            <div className="py-1">
               {sortOptions.map((option) => {
                 const isActive = currentSort === option.value;
                 return (
                   <button
                     key={option.value}
                     onClick={() => handleSelect(option.value)}
-                    className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition-colors"
+                    className={`w-full flex items-center px-5 py-3 text-[14px] transition-colors ${
+                      isActive ? 'font-semibold text-[#1A1A1A]' : 'text-[#4B5563]'
+                    }`}
                   >
-                    {/* Radio circle */}
-                    <span className={`w-[18px] h-[18px] rounded-full flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
-                      isActive ? 'border-[#1A1A1A]' : 'border-gray-300'
-                    }`}>
-                      {isActive && (
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#1A1A1A]" />
-                      )}
-                    </span>
-                    <span className={`text-[14px] ${
-                      isActive ? 'font-bold text-[#1A1A1A]' : 'text-gray-700'
-                    }`}>
-                      {option.label}
-                    </span>
+                    {option.label}
                   </button>
                 );
               })}
             </div>
 
-            {/* Safe area for mobile */}
-            <div className="safe-area-bottom" />
+            <div className="h-[env(safe-area-inset-bottom)]" />
           </motion.div>
         </>
       )}

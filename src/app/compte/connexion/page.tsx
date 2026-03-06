@@ -107,7 +107,7 @@ export default function ConnexionPage() {
                     Mot de passe
                   </label>
                   <a
-                    href="mailto:contact@shopfelten.be?subject=Mot%20de%20passe%20oubli%C3%A9"
+                    href="mailto:florian@felten.lu?subject=Mot%20de%20passe%20oubli%C3%A9"
                     className="text-[11px] font-bold text-gray-400 hover:text-[#DB021D] transition-colors mr-1"
                   >
                     Oublié ?

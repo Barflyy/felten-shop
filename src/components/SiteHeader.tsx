@@ -11,7 +11,6 @@ import { useSearchOverlay } from '@/components/homepage/hooks/useSearchOverlay';
 export default function SiteHeader() {
   const { cart, openCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const [headerScrolled, setHeaderScrolled] = useState(false);
 
   const { scrollY } = useScroll();
@@ -32,19 +31,11 @@ export default function SiteHeader() {
   const cartCount =
     cart?.lines?.edges?.reduce((sum, { node }) => sum + node.quantity, 0) ?? 0;
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPlaceholderIdx((prev) => (prev + 1) % 4);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <>
       <HomepageHeader
         cartCount={cartCount}
         headerScrolled={headerScrolled}
-        placeholderIdx={placeholderIdx}
         onOpenMenu={() => setMobileMenuOpen(true)}
         onOpenSearch={openSearch}
         onOpenCart={openCart}
@@ -60,6 +51,7 @@ export default function SiteHeader() {
         onClose={closeSearch}
         onQueryChange={setSearchQuery}
       />
+
     </>
   );
 }

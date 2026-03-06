@@ -1,7 +1,7 @@
 // Products with pagination support
 export const PRODUCTS_QUERY = `
-  query Products($first: Int!, $after: String) {
-    products(first: $first, after: $after) {
+  query Products($first: Int!, $after: String, $sortKey: ProductSortKeys) {
+    products(first: $first, after: $after, sortKey: $sortKey) {
       pageInfo {
         hasNextPage
         endCursor
@@ -147,13 +147,17 @@ export const COLLECTIONS_QUERY = `
 `;
 
 export const COLLECTION_BY_HANDLE_QUERY = `
-  query CollectionByHandle($handle: String!) {
+  query CollectionByHandle($handle: String!, $first: Int = 250, $after: String) {
     collection(handle: $handle) {
       id
       title
       handle
       description
-      products(first: 50) {
+      products(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
         edges {
           node {
             id

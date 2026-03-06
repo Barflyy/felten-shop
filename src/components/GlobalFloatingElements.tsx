@@ -2,7 +2,7 @@
 
 import { useCart } from '@/context/cart-context';
 
-const WHATSAPP_NUMBER = '352691000000'; // À remplacer
+const WHATSAPP_NUMBER = '352621304952';
 const WHATSAPP_MESSAGE = encodeURIComponent("Bonjour, j'ai une question concernant un produit Milwaukee...");
 
 export function GlobalFloatingElements() {

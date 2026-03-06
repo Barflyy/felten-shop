@@ -113,8 +113,8 @@ export default function PolitiqueRetourPage() {
                 <li>
                   Notifiez votre décision de rétractation <strong className="text-[#1A1A1A]">avant l&apos;expiration du délai de 14 jours</strong>{' '}
                   en nous contactant par email à{' '}
-                  <a href="mailto:contact@shopfelten.be" className="text-[#DB021D] hover:underline">
-                    contact@shopfelten.be
+                  <a href="mailto:florian@felten.lu" className="text-[#DB021D] hover:underline">
+                    florian@felten.lu
                   </a>{' '}
                   en indiquant votre numéro de commande et le(s) produit(s) concerné(s).
                 </li>
@@ -186,8 +186,8 @@ export default function PolitiqueRetourPage() {
                 <Mail className="w-5 h-5 text-[#DB021D] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
                 <div>
                   <p className="text-[13px] font-bold text-[#1A1A1A] mb-1">
-                    <a href="mailto:contact@shopfelten.be" className="text-[#DB021D] hover:underline">
-                      contact@shopfelten.be
+                    <a href="mailto:florian@felten.lu" className="text-[#DB021D] hover:underline">
+                      florian@felten.lu
                     </a>
                   </p>
                   <p className="text-[12px] text-[#6B7280]">

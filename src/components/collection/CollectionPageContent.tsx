@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SlidersHorizontal, ArrowUpDown, ChevronDown, X, Check } from 'lucide-react';
+import { SlidersHorizontal, ArrowUpDown, ChevronDown, ChevronRight, X, Check } from 'lucide-react';
 import { Product, Menu } from '@/lib/shopify/types';
 import { ProductCardCompact } from './ProductCardCompact';
 import { FilterDrawer, FilterState, defaultFilters } from './FilterDrawer';
@@ -79,7 +79,7 @@ const systemOptions = [
 
 const PRODUCTS_PER_LOAD = 20;
 
-/* ── Desktop Sidebar Accordion with Framer Motion ── */
+/* ── Desktop Sidebar Accordion ── */
 function SidebarAccordion({ title, defaultOpen = true, sectionKey, openSections, onToggle, children }: {
   title: string;
   defaultOpen?: boolean;
@@ -93,31 +93,16 @@ function SidebarAccordion({ title, defaultOpen = true, sectionKey, openSections,
     <div className="border-b border-gray-100 last:border-b-0">
       <button
         onClick={() => onToggle(sectionKey)}
-        className="w-full flex items-center justify-between px-3.5 py-3"
+        className="w-full flex items-center justify-between px-3.5 py-2.5"
       >
-        <span className="text-[13px] font-bold text-[#1A1A1A]">{title}</span>
-        <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <ChevronDown className="w-4 h-4 text-[#6B7280]" />
-        </motion.span>
+        <span className="text-[12px] font-semibold text-[#6B7280] uppercase tracking-wide">{title}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-[#9CA3AF] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="px-3 pb-3">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div className="px-3 pb-3">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
@@ -679,21 +664,21 @@ export function CollectionPageContent({
 
   return (
     <>
-      {/* Collection Header — Premium App-Like Design */}
-      <section className="bg-[#FAFAFA] border-b border-gray-200">
-        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 pt-6 lg:pt-14 pb-6 lg:pb-8">
+      {/* Collection Header */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 pt-5 lg:pt-10 pb-5 lg:pb-6">
           {/* Breadcrumb */}
-          <nav aria-label="Fil d'Ariane" className="mb-4 lg:mb-8">
-            <ol className="flex items-center gap-2 text-[12px] lg:text-[13px] font-medium text-[#6B7280]">
+          <nav aria-label="Fil d'Ariane" className="mb-3 lg:mb-4">
+            <ol className="flex items-center gap-1.5 text-[12px] lg:text-[13px] text-[#9CA3AF]">
               {breadcrumb.map((crumb, i) => (
-                <li key={i} className="flex items-center gap-2">
-                  {i > 0 && <ChevronDown className="w-3 h-3 -rotate-90 text-gray-400" />}
+                <li key={i} className="flex items-center gap-1.5">
+                  {i > 0 && <ChevronRight className="w-3 h-3 text-gray-300" />}
                   {crumb.href ? (
-                    <Link href={crumb.href} className="hover:text-[#DB021D] transition-colors">
+                    <Link href={crumb.href} className="hover:text-[#1A1A1A] transition-colors">
                       {crumb.label}
                     </Link>
                   ) : (
-                    <span className="text-[#1A1A1A] font-bold">{crumb.label}</span>
+                    <span className="text-[#6B7280]">{crumb.label}</span>
                   )}
                 </li>
               ))}
@@ -701,32 +686,23 @@ export function CollectionPageContent({
           </nav>
 
           {/* Title row + Sort (desktop) */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.05 }}
-              className="flex flex-col gap-2"
-            >
-              <h1
-                className="text-[32px] lg:text-[48px] font-black uppercase text-[#1A1A1A] leading-none tracking-tight"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-              >
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-3">
+            <div>
+              <h1 className="text-[22px] lg:text-[28px] font-bold text-[#1A1A1A] leading-tight">
                 {collectionTitle}
               </h1>
-              <span className="inline-flex items-center gap-2 text-[13px] lg:text-sm font-semibold text-[#6B7280] uppercase tracking-wider">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#DB021D]" />
+              <p className="text-[13px] text-[#9CA3AF] mt-0.5">
                 {filteredAndSortedProducts.length} produit{filteredAndSortedProducts.length > 1 ? 's' : ''}
-              </span>
-            </motion.div>
+              </p>
+            </div>
 
-            {/* Desktop sort — Sleek Dropdown */}
+            {/* Desktop sort */}
             <div className="hidden lg:block relative z-30">
               <button
                 onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[13px] font-bold text-[#1A1A1A] hover:border-[#1A1A1A] hover:shadow-sm transition-all"
+                className="flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-medium text-[#1A1A1A] hover:border-gray-300 transition-colors"
               >
-                <ArrowUpDown className="w-4 h-4 text-[#DB021D]" />
+                <ArrowUpDown className="w-3.5 h-3.5 text-[#9CA3AF]" />
                 <span>
                   Trier par : {sortBy === 'featured' && 'Par défaut'}
                   {sortBy === 'popular' && 'Popularité'}
@@ -737,77 +713,56 @@ export function CollectionPageContent({
                 </span>
                 <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              <AnimatePresence>
-                {isSortDropdownOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsSortDropdownOpen(false)} />
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-[calc(100%+8px)] w-56 bg-white border border-gray-100 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-50 py-1.5 overflow-hidden"
-                    >
-                      {([
-                        { value: 'featured' as SortOption, label: 'Par défaut' },
-                        { value: 'popular' as SortOption, label: 'Popularité' },
-                        { value: 'capacity-desc' as SortOption, label: 'Capacité (Ah)' },
-                        { value: 'price-asc' as SortOption, label: 'Prix croissant' },
-                        { value: 'price-desc' as SortOption, label: 'Prix décroissant' },
-                        { value: 'name-asc' as SortOption, label: 'Nom A-Z' },
-                      ]).map((option) => (
-                        <button
-                          key={option.value}
-                          onClick={() => {
-                            handleSortChange(option.value);
-                            setIsSortDropdownOpen(false);
-                          }}
-                          className={`w-full flex items-center justify-between px-4 py-2.5 text-[13px] transition-colors ${sortBy === option.value
-                            ? 'text-[#DB021D] font-bold bg-[#F9F9F9]'
-                            : 'text-[#1A1A1A] font-medium hover:bg-[#F5F5F5]'
-                            }`}
-                        >
-                          {option.label}
-                          {sortBy === option.value && <Check className="w-4 h-4" strokeWidth={3} />}
-                        </button>
-                      ))}
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
+              {isSortDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsSortDropdownOpen(false)} />
+                  <div className="absolute right-0 top-[calc(100%+4px)] w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1">
+                    {([
+                      { value: 'featured' as SortOption, label: 'Par défaut' },
+                      { value: 'popular' as SortOption, label: 'Popularité' },
+                      { value: 'capacity-desc' as SortOption, label: 'Capacité (Ah)' },
+                      { value: 'price-asc' as SortOption, label: 'Prix croissant' },
+                      { value: 'price-desc' as SortOption, label: 'Prix décroissant' },
+                      { value: 'name-asc' as SortOption, label: 'Nom A-Z' },
+                    ]).map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          handleSortChange(option.value);
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3.5 py-2 text-[13px] transition-colors ${sortBy === option.value
+                          ? 'text-[#DB021D] font-semibold'
+                          : 'text-[#1A1A1A] hover:bg-[#F5F5F5]'
+                          }`}
+                      >
+                        {option.label}
+                        {sortBy === option.value && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
-          {/* ── Quick Filter Chips ── */}
+          {/* Quick Filter Chips — mobile only (desktop uses sidebar) */}
           {(contextualFilterValues.some(f => f.values.length > 1) || products.length > 5) && (
-            <div className="flex items-center gap-2 overflow-x-auto mt-3 pb-1 snap-x" style={{ scrollbarWidth: 'none' }}>
+            <div className="flex items-center gap-1.5 overflow-x-auto mt-3 pb-0.5 no-scrollbar lg:hidden">
               {contextualFilterValues.map((filter) => {
                 if (filter.values.length <= 1) return null;
                 const activeValues = activeFilters.contextual[filter.key] || [];
                 return filter.values.map((value) => {
                   const isActive = activeValues.includes(value);
-                  const dotColor = filter.colorMap?.[value];
-                  const hasDot = dotColor?.startsWith('#');
                   return (
                     <button
                       key={`${filter.key}-${value}`}
                       onClick={() => toggleContextualChip(filter.key, value)}
-                      className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] lg:text-[13px] font-bold transition-all duration-200 active:scale-95 border ${isActive
-                        ? 'text-white border-[#DB021D] shadow-[0_2px_8px_rgba(219,2,29,0.25)]'
-                        : 'bg-white text-[#1A1A1A] border-gray-200 hover:border-[#1A1A1A] shadow-sm hover:shadow'
+                      className={`flex-shrink-0 px-2.5 py-1 rounded-md text-[12px] font-medium transition-colors ${isActive
+                        ? 'bg-[#1A1A1A] text-white'
+                        : 'bg-[#F5F5F5] text-[#4B5563] hover:bg-[#EBEBEB]'
                         }`}
-                      style={isActive ? {
-                        backgroundColor: hasDot ? dotColor : '#DB021D',
-                        borderColor: hasDot ? dotColor : '#DB021D',
-                        boxShadow: hasDot ? `0 2px 8px ${dotColor}40` : undefined,
-                      } : undefined}
                     >
-                      {hasDot && (
-                        <span
-                          className="w-2 h-2 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: isActive ? 'rgba(255,255,255,0.6)' : dotColor }}
-                        />
-                      )}
                       {value}
                     </button>
                   );
@@ -828,9 +783,9 @@ export function CollectionPageContent({
                       setActiveFilters({ ...activeFilters, system: updated });
                       setVisibleCount(PRODUCTS_PER_LOAD);
                     }}
-                    className={`flex-shrink-0 px-4 py-2 rounded-full text-[12px] lg:text-[13px] font-bold border transition-all duration-200 active:scale-95 shadow-sm ${isActive
-                      ? 'bg-[#DB021D] text-white border-[#DB021D] shadow-[0_2px_8px_rgba(219,2,29,0.25)]'
-                      : 'bg-white text-[#1A1A1A] border-gray-200 hover:border-[#1A1A1A] hover:bg-[#F9F9F9]'
+                    className={`flex-shrink-0 px-2.5 py-1 rounded-md text-[12px] font-medium transition-colors ${isActive
+                      ? 'bg-[#1A1A1A] text-white'
+                      : 'bg-[#F5F5F5] text-[#4B5563] hover:bg-[#EBEBEB]'
                       }`}
                   >
                     {sys}
@@ -843,32 +798,32 @@ export function CollectionPageContent({
         </div>
       </section>
 
-      {/* ── Fixed Bottom Bar (Mobile) — CLEAN WHITE DESIGN ── */}
-      <div className="fixed bottom-4 left-4 right-4 z-40 lg:hidden">
-        <div className="flex items-center bg-[#1A1A1A] rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.25)] overflow-hidden h-14 border border-white/10">
+      {/* Fixed Bottom Bar (Mobile) */}
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+12px)] left-4 right-4 z-40 lg:hidden">
+        <div className="flex items-center bg-white/95 backdrop-blur-md rounded-xl shadow-[0_2px_16px_rgba(0,0,0,0.1)] overflow-hidden h-12 border border-gray-200">
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2.5 h-full active:bg-white/10 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 h-full active:bg-gray-50 transition-colors"
           >
-            <SlidersHorizontal className="w-4 h-4 text-white" strokeWidth={2.5} />
-            <span className="text-[13px] font-bold text-white uppercase tracking-wider">
+            <SlidersHorizontal className="w-4 h-4 text-[#1A1A1A]" strokeWidth={2} />
+            <span className="text-[13px] font-medium text-[#1A1A1A]">
               Filtres
             </span>
             {activeFiltersCount > 0 && (
-              <span className="w-5 h-5 bg-[#DB021D] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+              <span className="w-5 h-5 bg-[#DB021D] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {activeFiltersCount}
               </span>
             )}
           </button>
 
-          <div className="w-[1px] h-6 bg-white/20" />
+          <div className="w-px h-5 bg-gray-200" />
 
           <button
             onClick={() => setIsSortOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2.5 h-full active:bg-white/10 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 h-full active:bg-gray-50 transition-colors"
           >
-            <ArrowUpDown className="w-4 h-4 text-white" strokeWidth={2.5} />
-            <span className="text-[13px] font-bold text-white uppercase tracking-wider">
+            <ArrowUpDown className="w-4 h-4 text-[#1A1A1A]" strokeWidth={2} />
+            <span className="text-[13px] font-medium text-[#1A1A1A]">
               Trier
             </span>
           </button>
@@ -879,8 +834,8 @@ export function CollectionPageContent({
 
       {/* Mobile Active Filters Tags */}
       {activeFiltersCount > 0 && (
-        <div className="bg-[#F5F5F5] border-b border-gray-100 lg:hidden">
-          <div className="px-4 py-2.5">
+        <div className="bg-white border-b border-gray-100 lg:hidden">
+          <div className="px-4 py-2">
             <div className="flex flex-wrap gap-1.5 items-center">
               {activeFilters.system.map((s) => (
                 <button
@@ -889,10 +844,10 @@ export function CollectionPageContent({
                     ...activeFilters,
                     system: activeFilters.system.filter(x => x !== s)
                   })}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#DB021D] rounded-lg text-[11px] font-semibold text-white"
+                  className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white"
                 >
                   {s}
-                  <X className="w-3 h-3" />
+                  <X className="w-2.5 h-2.5" />
                 </button>
               ))}
               {Object.entries(activeFilters.contextual).map(([key, values]) =>
@@ -906,10 +861,10 @@ export function CollectionPageContent({
                         [key]: activeFilters.contextual[key]!.filter(v => v !== val),
                       },
                     })}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#DB021D] rounded-lg text-[11px] font-semibold text-white"
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white"
                   >
                     {val}
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 ))
               )}
@@ -920,10 +875,10 @@ export function CollectionPageContent({
                     ...activeFilters,
                     machineType: activeFilters.machineType.filter(t => t !== type)
                   })}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#DB021D] rounded-lg text-[11px] font-semibold text-white"
+                  className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white"
                 >
                   {type}
-                  <X className="w-3 h-3" />
+                  <X className="w-2.5 h-2.5" />
                 </button>
               ))}
               {(activeFilters.priceRange[0] > 0 || activeFilters.priceRange[1] < 2000) && (
@@ -932,17 +887,17 @@ export function CollectionPageContent({
                     ...activeFilters,
                     priceRange: [0, 2000]
                   })}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#DB021D] rounded-lg text-[11px] font-semibold text-white"
+                  className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white"
                 >
                   {activeFilters.priceRange[0]}&euro; - {activeFilters.priceRange[1]}&euro;
-                  <X className="w-3 h-3" />
+                  <X className="w-2.5 h-2.5" />
                 </button>
               )}
               <button
                 onClick={() => handleApplyFilters(defaultFilters)}
-                className="text-[11px] text-[#DB021D] font-semibold ml-auto py-1"
+                className="text-[11px] text-[#9CA3AF] font-medium ml-auto"
               >
-                Tout effacer
+                Effacer
               </button>
             </div>
           </div>
@@ -951,46 +906,24 @@ export function CollectionPageContent({
 
       {/* Products Grid + Desktop Sidebar */}
       <section className="bg-[#FAFAFA]">
-        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 py-4 lg:py-6 pb-32 lg:pb-8">
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 py-4 lg:py-6 pb-24 lg:pb-8">
           <div className="lg:flex lg:gap-6">
 
             {/* ===== Desktop Sidebar ===== */}
             <aside className="hidden lg:block lg:w-[260px] lg:flex-shrink-0">
               <div className="sticky top-[84px] space-y-3 pb-8">
-                {/* Reset button — only when filters active */}
-                <AnimatePresence>
-                  {activeFiltersCount > 0 && (
-                    <motion.button
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                      onClick={() => handleApplyFilters(defaultFilters)}
-                      className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#DB021D]/10 text-[#DB021D] hover:bg-[#DB021D]/15 transition-colors text-[12px] font-bold"
-                    >
-                      <X className="w-3 h-3" />
-                      R&eacute;initialiser les filtres ({activeFiltersCount})
-                    </motion.button>
-                  )}
-                </AnimatePresence>
-
-                {/* Active filter tags */}
-                <AnimatePresence>
-                  {activeFiltersCount > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex flex-wrap gap-1.5"
-                    >
+                {/* Active filter tags + reset */}
+                {activeFiltersCount > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-1.5">
                       {activeFilters.system.map((s) => (
                         <button
                           key={s}
                           onClick={() => handleApplyFilters({ ...activeFilters, system: activeFilters.system.filter(x => x !== s) })}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#DB021D] rounded-md text-[11px] font-semibold text-white hover:bg-[#B8011A] transition-colors"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white hover:bg-[#333] transition-colors"
                         >
                           {s}
-                          <X className="w-3 h-3" />
+                          <X className="w-2.5 h-2.5" />
                         </button>
                       ))}
                       {Object.entries(activeFilters.contextual).map(([key, values]) =>
@@ -1001,28 +934,34 @@ export function CollectionPageContent({
                               ...activeFilters,
                               contextual: { ...activeFilters.contextual, [key]: activeFilters.contextual[key]!.filter(v => v !== val) },
                             })}
-                            className="inline-flex items-center gap-1 px-2 py-1 bg-[#DB021D] rounded-md text-[11px] font-semibold text-white hover:bg-[#B8011A] transition-colors"
+                            className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white hover:bg-[#333] transition-colors"
                           >
                             {val}
-                            <X className="w-3 h-3" />
+                            <X className="w-2.5 h-2.5" />
                           </button>
                         ))
                       )}
                       {(activeFilters.priceRange[0] > 0 || activeFilters.priceRange[1] < 2000) && (
                         <button
                           onClick={() => handleApplyFilters({ ...activeFilters, priceRange: [0, 2000] })}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#DB021D] rounded-md text-[11px] font-semibold text-white hover:bg-[#B8011A] transition-colors"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#1A1A1A] rounded-md text-[11px] font-medium text-white hover:bg-[#333] transition-colors"
                         >
                           {activeFilters.priceRange[0]}&euro; - {activeFilters.priceRange[1]}&euro;
-                          <X className="w-3 h-3" />
+                          <X className="w-2.5 h-2.5" />
                         </button>
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                    <button
+                      onClick={() => handleApplyFilters(defaultFilters)}
+                      className="text-[12px] text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors"
+                    >
+                      Tout effacer
+                    </button>
+                  </div>
+                )}
 
-                {/* ── All filter groups in one card ── */}
-                <div className="border border-gray-100 rounded-2xl bg-white overflow-hidden">
+                {/* Filter groups */}
+                <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
 
                   {/* Systeme */}
                   {(filterConfig.showSystemFilter !== false) && <SidebarAccordion title="Syst&egrave;me" defaultOpen sectionKey="system" openSections={sidebarSections} onToggle={toggleSidebarSection}>
@@ -1035,14 +974,13 @@ export function CollectionPageContent({
                           <button
                             key={opt.value}
                             onClick={() => toggleSystem(opt.value)}
-                            className="w-full group flex items-center gap-3 px-2 py-2 rounded-lg text-left transition-colors hover:bg-[#F9F9F9]"
+                            className="w-full group flex items-center gap-2.5 px-1.5 py-1.5 rounded text-left transition-colors hover:bg-[#F5F5F5]"
                           >
-                            <div className={`w-4 h-4 rounded-[4px] border flex-shrink-0 flex items-center justify-center transition-colors ${isSelected ? 'bg-[#DB021D] border-[#DB021D]' : 'bg-white border-gray-300 group-hover:border-[#DB021D]'}`}>
-                              {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                            <div className={`w-3.5 h-3.5 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${isSelected ? 'bg-[#1A1A1A] border-[#1A1A1A]' : 'border-gray-300'}`}>
+                              {isSelected && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
                             </div>
-                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.color}`} />
-                            <span className={`flex-1 text-[13px] ${isSelected ? 'font-bold text-[#1A1A1A]' : 'font-medium text-[#4B5563]'}`}>{opt.label}</span>
-                            <span className={`text-[11px] ${isSelected ? 'font-bold text-[#1A1A1A]' : 'font-medium text-[#9CA3AF]'}`}>{count}</span>
+                            <span className={`flex-1 text-[13px] ${isSelected ? 'font-semibold text-[#1A1A1A]' : 'text-[#4B5563]'}`}>{opt.label}</span>
+                            <span className="text-[11px] text-[#9CA3AF]">{count}</span>
                           </button>
                         );
                       })}
@@ -1066,13 +1004,13 @@ export function CollectionPageContent({
                               <button
                                 key={value}
                                 onClick={() => toggleContextualChip(filter.key, value)}
-                                className="w-full group flex items-center gap-3 px-2 py-2 rounded-lg text-left transition-colors hover:bg-[#F9F9F9]"
+                                className="w-full group flex items-center gap-2.5 px-1.5 py-1.5 rounded text-left transition-colors hover:bg-[#F5F5F5]"
                               >
-                                <div className={`w-4 h-4 rounded-[4px] border flex-shrink-0 flex items-center justify-center transition-colors ${isActive ? 'bg-[#DB021D] border-[#DB021D]' : 'bg-white border-gray-300 group-hover:border-[#DB021D]'}`}>
-                                  {isActive && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                                <div className={`w-3.5 h-3.5 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${isActive ? 'bg-[#1A1A1A] border-[#1A1A1A]' : 'border-gray-300'}`}>
+                                  {isActive && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
                                 </div>
-                                <span className={`flex-1 text-[13px] ${isActive ? 'font-bold text-[#1A1A1A]' : 'font-medium text-[#4B5563]'}`}>{value}</span>
-                                <span className={`text-[11px] ${isActive ? 'font-bold text-[#1A1A1A]' : 'font-medium text-[#9CA3AF]'}`}>{count}</span>
+                                <span className={`flex-1 text-[13px] ${isActive ? 'font-semibold text-[#1A1A1A]' : 'text-[#4B5563]'}`}>{value}</span>
+                                <span className="text-[11px] text-[#9CA3AF]">{count}</span>
                               </button>
                             );
                           })}
@@ -1085,24 +1023,22 @@ export function CollectionPageContent({
                   <SidebarAccordion title="Budget" defaultOpen sectionKey="price" openSections={sidebarSections} onToggle={toggleSidebarSection}>
                     <div className="grid grid-cols-2 gap-1.5">
                       {[
-                        { label: '< 100\u20AC', min: 0, max: 100 },
-                        { label: '100-300\u20AC', min: 100, max: 300 },
-                        { label: '300-500\u20AC', min: 300, max: 500 },
-                        { label: '500\u20AC+', min: 500, max: 2000 },
+                        { label: '< 100€', min: 0, max: 100 },
+                        { label: '100-300€', min: 100, max: 300 },
+                        { label: '300-500€', min: 300, max: 500 },
+                        { label: '500€+', min: 500, max: 2000 },
                       ].map((preset) => {
                         const isActive = activeFilters.priceRange[0] === preset.min && activeFilters.priceRange[1] === preset.max;
                         return (
                           <button
                             key={preset.label}
                             onClick={() => setPriceRange(isActive ? 0 : preset.min, isActive ? 2000 : preset.max)}
-                            className={`flex flex-col items-center justify-center py-2.5 rounded-xl border transition-all ${isActive
-                              ? 'bg-[#DB021D]/5 border-[#DB021D] text-[#DB021D] shadow-[0_2px_8px_rgba(219,2,29,0.12)]'
-                              : 'bg-white border-gray-200 text-[#4B5563] hover:border-[#1A1A1A] hover:text-[#1A1A1A]'
+                            className={`py-2 rounded text-[12px] font-medium transition-colors ${isActive
+                              ? 'bg-[#1A1A1A] text-white'
+                              : 'bg-[#F5F5F5] text-[#4B5563] hover:bg-[#EBEBEB]'
                               }`}
                           >
-                            <span className={`text-[13px] ${isActive ? 'font-bold' : 'font-semibold'}`}>
-                              {preset.label}
-                            </span>
+                            {preset.label}
                           </button>
                         );
                       })}
@@ -1118,64 +1054,39 @@ export function CollectionPageContent({
               {visibleProducts.length > 0 ? (
                 <>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                    <AnimatePresence mode="popLayout">
-                      {visibleProducts.map((product, idx) => (
-                        <ProductCardCompact
-                          key={product.id}
-                          product={product}
-                          index={idx < PRODUCTS_PER_LOAD ? idx : 0}
-                        />
-                      ))}
-                    </AnimatePresence>
+                    {visibleProducts.map((product) => (
+                      <ProductCardCompact
+                        key={product.id}
+                        product={product}
+                      />
+                    ))}
                   </div>
 
                   {/* Load More Button */}
                   {hasMoreProducts && (
-                    <div className="mt-8 lg:mt-10 px-2 lg:px-0">
-                      <div className="flex items-center justify-between text-[12px] text-[#6B7280] mb-3 px-1">
-                        <span>
-                          <span className="font-bold text-[#1A1A1A]">{visibleProducts.length}</span> produits affichés
-                        </span>
-                        <span>
-                          <span className="font-bold text-[#1A1A1A]">{filteredAndSortedProducts.length}</span> au total
-                        </span>
+                    <div className="mt-8 lg:mt-10">
+                      <div className="flex items-center justify-between text-[12px] text-[#9CA3AF] mb-3">
+                        <span>{visibleProducts.length} sur {filteredAndSortedProducts.length}</span>
                       </div>
-                      <div className="h-1.5 bg-gray-200 rounded-full mb-4 overflow-hidden">
+                      <div className="h-1 bg-gray-200 rounded-full mb-4 overflow-hidden">
                         <div
                           className="h-full bg-[#DB021D] rounded-full transition-all duration-500"
                           style={{ width: `${(visibleProducts.length / filteredAndSortedProducts.length) * 100}%` }}
                         />
                       </div>
-                      <motion.button
+                      <button
                         onClick={handleLoadMore}
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="group w-full py-4 bg-[#1A1A1A] text-white text-[13px] font-black uppercase tracking-wider rounded-2xl hover:bg-[#DB021D] transition-colors duration-300 flex items-center justify-center gap-3"
+                        className="w-full py-3 bg-white text-[#1A1A1A] text-[13px] font-semibold rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
                       >
-                        <motion.svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          animate={{ y: [0, 3, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </motion.svg>
-                        <span>Charger {Math.min(PRODUCTS_PER_LOAD, remainingProducts)} produits de plus</span>
-                      </motion.button>
+                        Voir plus ({Math.min(PRODUCTS_PER_LOAD, remainingProducts)})
+                      </button>
                     </div>
                   )}
                 </>
               ) : (
-                <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-[#F5F5F5] rounded-2xl flex items-center justify-center">
-                    <svg className="w-8 h-8 fill-gray-400" viewBox="0 0 24 24">
-                      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                    </svg>
-                  </div>
-                  <p className="text-[#1A1A1A] font-bold mb-2">Aucun produit trouvé</p>
-                  <p className="text-[#6B7280] text-[13px] mb-4">Essayez d&apos;ajuster vos filtres</p>
+                <div className="text-center py-16 bg-white rounded-lg border border-gray-100">
+                  <p className="text-[#1A1A1A] font-semibold mb-1">Aucun produit trouvé</p>
+                  <p className="text-[#9CA3AF] text-[13px] mb-4">Essayez d&apos;ajuster vos filtres</p>
                   <button
                     onClick={() => handleApplyFilters(defaultFilters)}
                     className="text-[#DB021D] font-bold text-[13px] hover:underline uppercase tracking-wide"
@@ -1190,46 +1101,16 @@ export function CollectionPageContent({
         </div>
       </section>
 
-      {/* Trust Banner - Premium Dark Mode */}
-      <section className="bg-[#1A1A1A] pt-6 lg:pt-8 pb-20 lg:pb-8 border-t-2 border-[#DB021D]">
-        <div className="max-w-[1400px] mx-auto px-4 lg:px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-            {[
-              { icon: 'shield', title: 'Garantie 3 ans', desc: 'Enregistrée' },
-              { icon: 'truck', title: 'Livraison 24h', desc: 'Express' },
-              { icon: 'refresh', title: 'SAV Premium', desc: 'À domicile' },
-              { icon: 'check', title: 'Agréé Milwaukee', desc: 'Officiel' },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-4 p-4 lg:p-5 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10">
-                <div className="w-12 h-12 bg-[#DB021D]/15 rounded-xl flex items-center justify-center flex-shrink-0 border border-[#DB021D]/30 group-hover:bg-[#DB021D]/20 transition-colors">
-                  {item.icon === 'shield' && (
-                    <svg className="w-5 h-5 lg:w-6 lg:h-6 fill-[#DB021D]" viewBox="0 0 24 24">
-                      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-                    </svg>
-                  )}
-                  {item.icon === 'truck' && (
-                    <svg className="w-5 h-5 lg:w-6 lg:h-6 fill-[#DB021D]" viewBox="0 0 24 24">
-                      <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
-                    </svg>
-                  )}
-                  {item.icon === 'refresh' && (
-                    <svg className="w-5 h-5 lg:w-6 lg:h-6 fill-[#DB021D]" viewBox="0 0 24 24">
-                      <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
-                    </svg>
-                  )}
-                  {item.icon === 'check' && (
-                    <svg className="w-5 h-5 lg:w-6 lg:h-6 fill-[#DB021D]" viewBox="0 0 24 24">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                    </svg>
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[14px] lg:text-[15px] font-bold text-white truncate tracking-wide">{item.title}</p>
-                  <p className="text-[12px] text-gray-400 truncate">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Trust Bar */}
+      <section className="bg-white border-t border-gray-100 py-5 lg:py-6 hidden lg:block">
+        <div className="max-w-[1400px] mx-auto px-6 flex items-center justify-center gap-8 text-[13px] text-[#9CA3AF] font-medium">
+          <span>Garantie 3 ans</span>
+          <span className="w-1 h-1 rounded-full bg-gray-300" />
+          <span>Livraison 24h</span>
+          <span className="w-1 h-1 rounded-full bg-gray-300" />
+          <span>SAV Premium</span>
+          <span className="w-1 h-1 rounded-full bg-gray-300" />
+          <span>Revendeur agréé Milwaukee</span>
         </div>
       </section>
 

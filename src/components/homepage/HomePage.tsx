@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { Footer } from '@/components/footer';
 import { useCart } from '@/context/cart-context';
@@ -16,10 +16,6 @@ import CategoryGrid from './CategoryGrid';
 import BestsellerCarousel from './BestsellerCarousel';
 
 // Below-fold sections: lazy-loaded to reduce initial JS bundle
-const TrustSignals = dynamic(() => import('./TrustSignals'), { ssr: true });
-const NouveautesSection = dynamic(() => import('./NouveautesSection'), { ssr: true });
-const ReviewSection = dynamic(() => import('./ReviewSection'), { ssr: true });
-const B2BSection = dynamic(() => import('./B2BSection'), { ssr: true });
 const NewsletterSection = dynamic(() => import('./NewsletterSection'), { ssr: true });
 const BackToTop = dynamic(() => import('./BackToTop'), { ssr: false });
 const FloatingBadge = dynamic(() => import('./FloatingBadge'), { ssr: false });
@@ -29,9 +25,6 @@ export default function HomePage({ products }: { products: Product[] }) {
   const { addToCart } = useCart();
 
   const { showScrollTop, scrollToTop } = useScrollEffects();
-
-  /* Nouveautés: different slice */
-  const nouveautes = useMemo(() => products.slice(8, 14), [products]);
 
   const handleAddToCart = useCallback(
     async (variantId: string, productId: string) => {
@@ -58,20 +51,12 @@ export default function HomePage({ products }: { products: Product[] }) {
         <HeroSection />
         <TrustMarquee />
         <EcosystemNav />
-        <CategoryGrid />
         <BestsellerCarousel
           products={products}
           addingId={addingId}
           onAddToCart={handleAddToCart}
         />
-        <TrustSignals />
-        <NouveautesSection
-          products={nouveautes}
-          addingId={addingId}
-          onAddToCart={handleAddToCart}
-        />
-        <ReviewSection />
-        <B2BSection />
+        <CategoryGrid />
         <NewsletterSection />
       </main>
 

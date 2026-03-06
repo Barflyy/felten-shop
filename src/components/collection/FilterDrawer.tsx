@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { Menu, MenuItem, Product } from '@/lib/shopify/types';
@@ -48,13 +48,13 @@ function extractAllCategories(menu: Menu | null): string[] {
 }
 
 const systemOptions = [
-  { value: 'M18 FUEL', label: 'M18 FUEL', dot: 'bg-[#DB021D]' },
-  { value: 'M12 FUEL', label: 'M12 FUEL', dot: 'bg-[#DB021D]' },
-  { value: 'M18 Brushless', label: 'M18', dot: 'bg-emerald-500' },
-  { value: 'M12 Brushless', label: 'M12', dot: 'bg-emerald-500' },
-  { value: 'MX FUEL', label: 'MX FUEL', dot: 'bg-orange-500' },
-  { value: 'Filaire', label: 'Filaire', dot: 'bg-blue-500' },
-  { value: 'Autres', label: 'Autres', dot: 'bg-zinc-400' },
+  { value: 'M18 FUEL', label: 'M18 FUEL' },
+  { value: 'M12 FUEL', label: 'M12 FUEL' },
+  { value: 'M18 Brushless', label: 'M18' },
+  { value: 'M12 Brushless', label: 'M12' },
+  { value: 'MX FUEL', label: 'MX FUEL' },
+  { value: 'Filaire', label: 'Filaire' },
+  { value: 'Autres', label: 'Autres' },
 ];
 
 const pricePresets = [
@@ -64,7 +64,7 @@ const pricePresets = [
   { label: '500\u20AC+', min: 500, max: 2000 },
 ];
 
-/* ── Accordion Section with Framer Motion ── */
+/* ── Accordion Section ── */
 function Section({ title, defaultOpen = false, children }: {
   title: string;
   defaultOpen?: boolean;
@@ -75,31 +75,16 @@ function Section({ title, defaultOpen = false, children }: {
     <div className="border-b border-gray-100">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4"
+        className="w-full flex items-center justify-between px-5 py-3"
       >
-        <span className="text-[13px] font-bold text-[#1A1A1A] uppercase tracking-wide">{title}</span>
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <ChevronDown className="w-4 h-4 text-gray-400" />
-        </motion.span>
+        <span className="text-[12px] font-semibold text-[#6B7280] uppercase tracking-wide">{title}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-[#9CA3AF] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-4">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && (
+        <div className="px-5 pb-3">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
@@ -113,21 +98,20 @@ function Checkbox({ checked, label, count, dot, onChange }: {
   onChange: () => void;
 }) {
   return (
-    <button onClick={onChange} className="w-full flex items-center gap-3 py-2.5 group">
-      <span className={`w-[18px] h-[18px] rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${checked ? 'bg-[#DB021D] border-[#DB021D]' : 'border-gray-300 group-hover:border-gray-400'
+    <button onClick={onChange} className="w-full flex items-center gap-2.5 py-2">
+      <span className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${checked ? 'bg-[#1A1A1A] border-[#1A1A1A]' : 'border-gray-300'
         }`}>
         {checked && (
-          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         )}
       </span>
-      {dot && <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${dot}`} />}
-      <span className={`text-[14px] flex-1 text-left ${checked ? 'font-semibold text-[#DB021D]' : 'text-gray-700'}`}>
+      <span className={`text-[14px] flex-1 text-left ${checked ? 'font-semibold text-[#1A1A1A]' : 'text-[#4B5563]'}`}>
         {label}
       </span>
       {count !== undefined && count > 0 && (
-        <span className="text-[12px] text-gray-400 font-medium">{count}</span>
+        <span className="text-[11px] text-[#9CA3AF]">{count}</span>
       )}
     </button>
   );
@@ -262,35 +246,30 @@ export function FilterDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/50 z-[60]"
+            className="fixed inset-0 bg-black/40 z-[60]"
             onClick={onClose}
           />
 
-          {/* Bottom Sheet — slides up */}
+          {/* Bottom Sheet */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-[60] bg-white rounded-t-2xl flex flex-col shadow-2xl"
+            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed inset-x-0 bottom-0 z-[60] bg-white rounded-t-xl flex flex-col"
             style={{ maxHeight: '85vh' }}
           >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-              <div className="w-10 h-1 rounded-full bg-gray-300" />
-            </div>
-
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pb-3 border-b border-gray-100 flex-shrink-0">
-              <h2 className="text-[16px] font-bold text-[#1A1A1A]">Filtres</h2>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 flex-shrink-0">
+              <h2 className="text-[15px] font-bold text-[#1A1A1A]">Filtres</h2>
               <div className="flex items-center gap-3">
                 {activeCount > 0 && (
-                  <button onClick={handleReset} className="text-[12px] font-medium text-[#DB021D] hover:underline transition-colors">
-                    Tout effacer
+                  <button onClick={handleReset} className="text-[12px] text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors">
+                    Effacer
                   </button>
                 )}
-                <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors" aria-label="Fermer">
-                  <X className="w-4 h-4 text-gray-500" />
+                <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors" aria-label="Fermer">
+                  <X className="w-4 h-4 text-[#9CA3AF]" />
                 </button>
               </div>
             </div>
@@ -299,14 +278,13 @@ export function FilterDrawer({
             <div className="flex-1 overflow-y-auto overscroll-contain">
               {/* Systeme */}
               {visibleSystems.length > 0 && (
-                <Section title="Syst\u00e8me" defaultOpen>
+                <Section title="Système" defaultOpen>
                   {visibleSystems.map((opt) => (
                     <Checkbox
                       key={opt.value}
                       checked={filters.system.includes(opt.value)}
                       label={opt.label}
                       count={systemCounts[opt.value]}
-                      dot={opt.dot}
                       onChange={() => toggleSystem(opt.value)}
                     />
                   ))}
@@ -346,9 +324,9 @@ export function FilterDrawer({
                             priceRange: isActive ? [0, 2000] : [preset.min, preset.max],
                           }));
                         }}
-                        className={`py-2.5 rounded-lg text-[13px] font-medium border transition-all ${isActive
-                            ? 'bg-[#DB021D] text-white border-[#DB021D]'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
+                        className={`py-2 rounded-md text-[13px] font-medium transition-colors ${isActive
+                            ? 'bg-[#1A1A1A] text-white'
+                            : 'bg-[#F5F5F5] text-[#4B5563]'
                           }`}
                       >
                         {preset.label}
@@ -360,7 +338,7 @@ export function FilterDrawer({
 
               {/* Categorie */}
               {filterConfig.showMachineTypeFilter && machineTypes.length > 0 && (
-                <Section title="Cat\u00e9gorie" defaultOpen>
+                <Section title="Catégorie" defaultOpen>
                   {machineTypes.map((type) => (
                     <Checkbox
                       key={type}
@@ -375,13 +353,13 @@ export function FilterDrawer({
               <div className="h-4" />
             </div>
 
-            {/* Footer — sticky CTA */}
-            <div className="border-t border-gray-100 px-5 py-4 flex-shrink-0 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            {/* Footer */}
+            <div className="border-t border-gray-100 px-5 py-3 flex-shrink-0 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
               <button
                 onClick={handleApply}
-                className="w-full h-[52px] bg-[#DB021D] text-white font-bold text-[14px] uppercase tracking-wider rounded-lg hover:bg-[#B8011A] active:scale-[0.98] transition-all"
+                className="w-full h-11 bg-[#1A1A1A] text-white font-semibold text-[14px] rounded-lg hover:bg-[#333] transition-colors"
               >
-                Voir {filteredCount} r\u00e9sultat{filteredCount !== 1 ? 's' : ''}
+                Voir {filteredCount} résultat{filteredCount !== 1 ? 's' : ''}
               </button>
             </div>
           </motion.div>

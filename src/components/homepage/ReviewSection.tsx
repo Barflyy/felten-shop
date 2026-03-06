@@ -14,7 +14,7 @@ export default function ReviewSection() {
   const handleReviewScroll = useCallback(() => {
     if (!reviewSliderRef.current) return;
     const { scrollLeft, offsetWidth } = reviewSliderRef.current;
-    const cardWidth = offsetWidth * 0.85;
+    const cardWidth = offsetWidth * 0.75;
     setActiveReviewSlide(Math.round(scrollLeft / cardWidth));
   }, []);
 
@@ -26,46 +26,46 @@ export default function ReviewSection() {
   }, [handleReviewScroll]);
 
   return (
-    <section className="pt-14 pb-12 lg:pt-24 lg:pb-20 bg-white">
-      <div ref={sectionRef} className="max-w-[1280px] mx-auto px-6 lg:px-8">
+    <section className="pt-8 pb-8 lg:pt-24 lg:pb-20 bg-white">
+      <div ref={sectionRef} className="max-w-[1280px] mx-auto px-4 lg:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[1.75rem] lg:text-4xl font-black uppercase tracking-normal text-center mb-6 lg:mb-12"
+          className="text-xl lg:text-4xl font-black uppercase tracking-normal text-center mb-5 lg:mb-12"
         >
           ILS NOUS FONT CONFIANCE
         </motion.h2>
 
         <div className="md:flex md:gap-8 lg:gap-12">
-          {/* Left 1/3: Aggregate */}
-          <div className="md:w-1/3 mb-6 md:mb-0">
+          {/* Left: Aggregate */}
+          <div className="md:w-1/3 mb-5 md:mb-0">
             {/* Mobile: compact inline bar */}
-            <div className="md:hidden flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="md:hidden flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
               <div className="text-center">
                 <motion.span
-                  className="text-[40px] font-black text-[#1A1A1A] leading-none block"
+                  className="text-[32px] font-black text-[#1A1A1A] leading-none block"
                   initial={{ opacity: 0 }}
                   animate={isInView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.6 }}
                 >
                   4.9
                 </motion.span>
-                <div className="flex gap-0.5 justify-center mt-1">
+                <div className="flex gap-0.5 justify-center mt-0.5">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="w-3.5 h-3.5 text-[#FBBF24]" fill="#FBBF24" strokeWidth={0} />
+                    <Star key={i} className="w-3 h-3 text-[#FBBF24]" fill="#FBBF24" strokeWidth={0} />
                   ))}
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-[13px] font-semibold text-[#1A1A1A]">340 avis vérifiés</p>
-                <div className="flex gap-2 mt-1.5">
-                  <span className="text-[11px] text-[#6B7280] border border-gray-200 px-2 py-1 rounded-md flex items-center gap-1">
+                <p className="text-[12px] font-semibold text-[#1A1A1A]">340 avis vérifiés</p>
+                <div className="flex gap-1.5 mt-1">
+                  <span className="text-[10px] text-[#6B7280] border border-gray-200 px-1.5 py-0.5 rounded flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4] flex-shrink-0" />
                     Google
                   </span>
-                  <span className="text-[11px] text-[#6B7280] border border-gray-200 px-2 py-1 rounded-md flex items-center gap-1">
+                  <span className="text-[10px] text-[#6B7280] border border-gray-200 px-1.5 py-0.5 rounded flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00B67A] flex-shrink-0" />
                     Trustpilot
                   </span>
@@ -73,7 +73,7 @@ export default function ReviewSection() {
               </div>
             </div>
 
-            {/* Desktop: full block with distribution bars */}
+            {/* Desktop: full block */}
             <div className="hidden md:block bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="text-center mb-4">
                 <motion.span
@@ -121,11 +121,11 @@ export default function ReviewSection() {
             </div>
           </div>
 
-          {/* Right 2/3: Reviews carousel */}
+          {/* Right: Reviews */}
           <div className="md:w-2/3">
             <div
               ref={reviewSliderRef}
-              className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 md:grid md:grid-cols-2"
+              className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 md:grid md:grid-cols-2 md:gap-4"
             >
               {REVIEWS.map((review, index) => (
                 <motion.div
@@ -138,43 +138,43 @@ export default function ReviewSection() {
                     ease: [0.16, 1, 0.3, 1],
                   }}
                   whileHover={{ y: -3, boxShadow: '0 8px 25px rgba(0,0,0,0.07)' }}
-                  className="flex-shrink-0 w-[85%] min-[480px]:w-[65%] md:w-auto snap-start bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col transition-shadow"
+                  className="flex-shrink-0 w-[75vw] max-w-[300px] md:w-auto md:max-w-none snap-start bg-white rounded-xl lg:rounded-2xl p-4 lg:p-6 shadow-sm border border-gray-100 flex flex-col transition-shadow"
                 >
-                  <div className="flex gap-0.5 mb-3">
+                  <div className="flex gap-0.5 mb-2">
                     {[1, 2, 3, 4, 5].map((i) => (
                       <Star
                         key={i}
-                        className={`w-[18px] h-[18px] ${i <= review.rating ? 'text-[#F59E0B]' : 'text-gray-200'}`}
+                        className={`w-4 h-4 ${i <= review.rating ? 'text-[#F59E0B]' : 'text-gray-200'}`}
                         fill={i <= review.rating ? '#F59E0B' : '#e5e7eb'}
                         strokeWidth={0}
                       />
                     ))}
                   </div>
-                  <p className="text-[14px] text-[#1A1A1A] leading-relaxed flex-grow mb-4">
+                  <p className="text-[13px] lg:text-[14px] text-[#1A1A1A] leading-relaxed flex-grow mb-3">
                     &quot;{review.text}&quot;
                   </p>
-                  <p className="text-[11px] text-[#6B7280] mb-3">Produit : {review.product}</p>
+                  <p className="text-[10px] text-[#6B7280] mb-2">Produit : {review.product}</p>
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-[13px] font-bold text-[#1A1A1A] block">{review.name}</span>
-                      <span className="text-[11px] text-[#6B7280]">
+                      <span className="text-[12px] lg:text-[13px] font-bold text-[#1A1A1A] block">{review.name}</span>
+                      <span className="text-[10px] lg:text-[11px] text-[#6B7280]">
                         {review.job} — {review.city}
                       </span>
                     </div>
                     <div className="flex flex-col items-end gap-0.5">
                       {review.verified && (
-                        <span className="text-[10px] font-semibold text-[#16A34A] flex items-center gap-0.5">
+                        <span className="text-[9px] lg:text-[10px] font-semibold text-[#16A34A] flex items-center gap-0.5">
                           <CheckCircle2 className="w-3 h-3" strokeWidth={2.5} />
                           Vérifié
                         </span>
                       )}
-                      <span className="text-[10px] text-[#6B7280] flex items-center gap-1">
+                      <span className="text-[9px] lg:text-[10px] text-[#6B7280] flex items-center gap-1">
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
                             review.source === 'Google' ? 'bg-[#4285F4]' : 'bg-[#00B67A]'
                           }`}
                         />
-                        {review.source} · {review.date}
+                        {review.source}
                       </span>
                     </div>
                   </div>
@@ -182,17 +182,17 @@ export default function ReviewSection() {
               ))}
             </div>
 
-            {/* Pagination dots (mobile only) */}
-            <div className="md:hidden flex justify-center gap-2 mt-5">
+            {/* Pagination dots (mobile) */}
+            <div className="md:hidden flex justify-center gap-1.5 mt-4">
               {REVIEWS.map((_, i) => (
                 <motion.div
                   key={i}
                   animate={{
-                    width: i === activeReviewSlide ? 24 : 8,
+                    width: i === activeReviewSlide ? 20 : 6,
                     backgroundColor: i === activeReviewSlide ? '#DB021D' : '#d1d5db',
                   }}
                   transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  className="h-2 rounded-full"
+                  className="h-1.5 rounded-full"
                 />
               ))}
             </div>

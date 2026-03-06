@@ -84,7 +84,7 @@ export default function ContactPage() {
                 </h2>
                 <div className="space-y-4">
                   <a
-                    href="tel:+32XXXXXXXXX"
+                    href="tel:+352621304952"
                     className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50 transition-all group"
                   >
                     <div className="w-12 h-12 rounded-xl bg-gray-50 text-[#1A1A1A] flex items-center justify-center group-hover:bg-[#DB021D] group-hover:text-white transition-colors">
@@ -92,12 +92,12 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Téléphone</p>
-                      <p className="text-[15px] font-bold text-[#1A1A1A]">+32 XX XXX XX XX</p>
+                      <p className="text-[15px] font-bold text-[#1A1A1A]">+352 621 304 952</p>
                     </div>
                   </a>
 
                   <a
-                    href="mailto:contact@shopfelten.be"
+                    href="mailto:florian@felten.lu"
                     className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50 transition-all group"
                   >
                     <div className="w-12 h-12 rounded-xl bg-gray-50 text-[#1A1A1A] flex items-center justify-center group-hover:bg-[#DB021D] group-hover:text-white transition-colors">
@@ -105,7 +105,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">Email</p>
-                      <p className="text-[15px] font-bold text-[#1A1A1A]">contact@shopfelten.be</p>
+                      <p className="text-[15px] font-bold text-[#1A1A1A]">florian@felten.lu</p>
                     </div>
                   </a>
 
@@ -131,7 +131,7 @@ export default function ContactPage() {
                   Pour une réponse immédiate, contactez-nous directement sur WhatsApp.
                 </p>
                 <a
-                  href="https://wa.me/32XXXXXXXXX"
+                  href="https://wa.me/352621304952"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white text-[13px] font-bold px-5 py-4 rounded-xl hover:bg-[#1ebe5d] transition-all shadow-lg shadow-[#25D366]/20 active:scale-[0.98]"
@@ -207,7 +207,7 @@ export default function ContactPage() {
                         name="telephone"
                         value={form.telephone}
                         onChange={handleChange}
-                        placeholder="+32 XX XXX XX XX"
+                        placeholder="+352 621 304 952"
                         className="w-full h-14 border border-gray-200 rounded-xl px-5 text-[15px] text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#DB021D] focus:ring-1 focus:ring-[#DB021D] transition-all bg-gray-50 focus:bg-white"
                       />
                     </div>

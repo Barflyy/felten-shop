@@ -4,6 +4,7 @@ export interface CategoryItem {
   handle: string;
   image: string;
   count: number;
+  bentoSize?: 'featured' | 'tall' | 'wide' | 'standard';
 }
 
 export interface Review {
@@ -31,4 +32,4 @@ export interface SearchProduct {
   priceRange: { minVariantPrice: { amount: string } };
 }
 
-export type TabKey = 'tous' | 'perceuses' | 'visseuses' | 'meuleuses' | 'batteries';
+export type TabKey = 'tous' | 'perceuses' | 'scies' | 'meuleuses' | 'batteries';

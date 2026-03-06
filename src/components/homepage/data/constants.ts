@@ -7,6 +7,7 @@ export const CATEGORIES: CategoryItem[] = [
     handle: 'outils-electroportatifs',
     image: '/categories/outils-electroportatifs.png',
     count: 186,
+    bentoSize: 'featured',
   },
   {
     name: 'Batteries & Chargeurs',
@@ -21,6 +22,7 @@ export const CATEGORIES: CategoryItem[] = [
     handle: 'aspirateurs',
     image: '/categories/aspirateurs.png',
     count: 32,
+    bentoSize: 'tall',
   },
   {
     name: 'Éclairage',
@@ -56,6 +58,7 @@ export const CATEGORIES: CategoryItem[] = [
     handle: 'assainissement-et-nettoyage',
     image: '/categories/assainissement.png',
     count: 22,
+    bentoSize: 'wide',
   },
 ];
 
@@ -139,7 +142,7 @@ export const RATING_DISTRIBUTION: RatingDistribution[] = [
 export const BESTSELLER_TABS = [
   { key: 'tous', label: 'TOUS' },
   { key: 'perceuses', label: 'PERCEUSES' },
-  { key: 'visseuses', label: 'VISSEUSES' },
+  { key: 'scies', label: 'SCIES' },
   { key: 'meuleuses', label: 'MEULEUSES' },
   { key: 'batteries', label: 'BATTERIES' },
 ] as const;

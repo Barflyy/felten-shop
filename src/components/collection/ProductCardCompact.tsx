@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Plus, Check } from 'lucide-react';
 import { Product } from '@/lib/shopify/types';
 import { useCart } from '@/context/cart-context';
@@ -172,16 +171,10 @@ export function ProductCardCompact({ product, index = 0, onQuickView }: ProductC
   };
 
   return (
-    <motion.div
-      className="h-full"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.3, delay: index * 0.03, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div className="h-full">
       <Link
         href={`/produit/${product.handle}`}
-        className="group flex flex-col h-full bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md"
+        className="group flex flex-col h-full bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-200 transition-colors"
       >
         {/* ━━ Image Zone ━━ */}
         <div className="relative aspect-square bg-[#FAFAFA]">
@@ -274,6 +267,6 @@ export function ProductCardCompact({ product, index = 0, onQuickView }: ProductC
           )}
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

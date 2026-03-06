@@ -71,6 +71,10 @@ interface CollectionResponse {
     handle: string;
     description?: string;
     products: {
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor: string | null;
+      };
       edges: ProductEdge[];
     };
   } | null;
@@ -128,7 +132,7 @@ function reshapeProduct(productNode: ProductEdge['node']): Product {
  * @param first - Number of products per page (max 250)
  * @param fetchAll - If true, fetches ALL products using cursor pagination
  */
-export async function getProducts(first: number = 20, fetchAll: boolean = false): Promise<Product[]> {
+export async function getProducts(first: number = 20, fetchAll: boolean = false, sortKey?: string): Promise<Product[]> {
   try {
     const allProducts: Product[] = [];
     let hasNextPage: boolean = true;
@@ -143,6 +147,7 @@ export async function getProducts(first: number = 20, fetchAll: boolean = false)
         variables: {
           first: pageSize,
           after: cursor,
+          ...(sortKey && { sortKey }),
         },
         tags: ['products'],
       });
@@ -181,10 +186,8 @@ export async function getAllProducts(): Promise<Product[]> {
 
 export async function getCollectionProducts({
   collection,
-  first = 20,
 }: {
   collection: string;
-  first?: number;
 }): Promise<Product[]> {
   try {
     // Si collection est "all", récupérer tous les produits
@@ -192,17 +195,34 @@ export async function getCollectionProducts({
       return getAllProducts();
     }
 
-    const data = await shopifyFetch<CollectionResponse>({
-      query: COLLECTION_BY_HANDLE_QUERY,
-      variables: { handle: collection },
-      tags: [`collection-${collection}`, 'collections'],
-    });
+    const allProducts: Product[] = [];
+    let hasNextPage = true;
+    let cursor: string | null = null;
 
-    if (!data.collection) {
-      return [];
+    while (hasNextPage) {
+      const response: CollectionResponse = await shopifyFetch<CollectionResponse>({
+        query: COLLECTION_BY_HANDLE_QUERY,
+        variables: { handle: collection, first: 250, after: cursor },
+        tags: [`collection-${collection}`, 'collections'],
+      });
+
+      if (!response.collection) {
+        return [];
+      }
+
+      const products = response.collection.products.edges.map((edge: ProductEdge) => reshapeProduct(edge.node));
+      allProducts.push(...products);
+
+      hasNextPage = response.collection.products.pageInfo.hasNextPage;
+      cursor = response.collection.products.pageInfo.endCursor;
+
+      if (allProducts.length > 2000) {
+        console.warn('Collection product fetch limit reached (2000)');
+        break;
+      }
     }
 
-    return data.collection.products.edges.map((edge) => reshapeProduct(edge.node));
+    return allProducts;
   } catch (error) {
     console.error('Error fetching collection products:', error);
     return [];

@@ -930,7 +930,6 @@ export default function HomePage({ products }: { products: Product[] }) {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    badge="nouveau"
                     size="large"
                   />
                 ))}

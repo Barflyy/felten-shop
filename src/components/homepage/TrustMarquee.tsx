@@ -16,28 +16,32 @@ export default function TrustMarquee() {
       const Icon = item.icon;
       return (
         <span
-          key={i}
-          className="inline-flex items-center gap-2 px-6 text-white/95 text-[13px] font-bold uppercase tracking-wider whitespace-nowrap"
+          key={`marquee-item-${i}`}
+          className="inline-flex items-center gap-1.5 px-4 lg:px-6 text-white text-[11px] lg:text-[13px] font-bold uppercase tracking-wider whitespace-nowrap"
         >
-          <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={3} />
+          <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0" strokeWidth={2.5} />
           {item.text}
         </span>
       );
     });
 
   return (
-    <div className="bg-[#DB021D] py-2.5 overflow-hidden relative">
-      <div className="flex animate-[marquee_25s_linear_infinite]">
-        {renderItems()}
-        {renderItems()}
-        {renderItems()}
+    <div className="bg-[#DB021D] py-2.5 lg:py-3.5 overflow-hidden relative">
+      <div
+        className="flex w-max"
+        style={{ animation: 'marquee 25s linear infinite' }}
+      >
+        <div className="flex">{renderItems()}</div>
+        <div className="flex">{renderItems()}</div>
+        <div className="flex">{renderItems()}</div>
       </div>
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes marquee {
           from { transform: translateX(0); }
           to { transform: translateX(-33.333%); }
         }
-      `}</style>
+      `}} />
     </div>
   );
 }
