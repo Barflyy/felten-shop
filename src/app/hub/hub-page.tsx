@@ -12,9 +12,23 @@ import {
 } from 'lucide-react';
 
 function saveContact(slug: string) {
-  // Navigate to the API route — the OS intercepts the text/vcard response
-  // and opens the native Contacts app (iOS "Add to Contacts" sheet, Android contact picker)
-  window.location.href = `/api/contact?slug=${slug}`;
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+
+  if (isIOS) {
+    // iOS Safari: fetch vCard then open as data URI — triggers native "Add to Contacts" sheet
+    fetch(`/api/contact?slug=${slug}`)
+      .then((r) => r.text())
+      .then((vcard) => {
+        window.location.href =
+          'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcard);
+      });
+  } else {
+    // Android: open API route directly — browser downloads .vcf,
+    // system prompts to open with Contacts app
+    // Desktop: downloads .vcf file (user can double-click to open in Contacts)
+    window.open(`/api/contact?slug=${slug}`, '_blank');
+  }
 }
 
 function formatPhone(phone: string): string {

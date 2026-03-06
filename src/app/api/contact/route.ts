@@ -37,10 +37,19 @@ export async function GET(request: Request) {
   const vcard = generateVCard(profile);
   const filename = profile.name.replace(/\s+/g, '-').toLowerCase();
 
+  // Detect platform from User-Agent to set optimal Content-Disposition
+  const ua = request.headers.get('user-agent') || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+  // iOS: inline lets Safari trigger the native contact sheet
+  // Others: attachment forces download with .vcf extension (Android recognizes and offers Contacts app)
+  const disposition = isIOS
+    ? `inline; filename="${filename}.vcf"`
+    : `attachment; filename="${filename}.vcf"`;
+
   return new NextResponse(vcard, {
     headers: {
-      'Content-Type': 'text/vcard; charset=utf-8',
-      'Content-Disposition': `inline; filename="${filename}.vcf"`,
+      'Content-Type': 'text/x-vcard; charset=utf-8',
+      'Content-Disposition': disposition,
       'Cache-Control': 'no-cache',
     },
   });
