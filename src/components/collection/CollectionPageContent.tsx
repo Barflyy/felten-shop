@@ -667,24 +667,6 @@ export function CollectionPageContent({
       {/* Collection Header */}
       <section className="bg-white border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-6 pt-5 lg:pt-10 pb-5 lg:pb-6">
-          {/* Breadcrumb */}
-          <nav aria-label="Fil d'Ariane" className="mb-3 lg:mb-4">
-            <ol className="flex items-center gap-1.5 text-[12px] lg:text-[13px] text-[#9CA3AF]">
-              {breadcrumb.map((crumb, i) => (
-                <li key={i} className="flex items-center gap-1.5">
-                  {i > 0 && <ChevronRight className="w-3 h-3 text-gray-300" />}
-                  {crumb.href ? (
-                    <Link href={crumb.href} className="hover:text-[#1A1A1A] transition-colors">
-                      {crumb.label}
-                    </Link>
-                  ) : (
-                    <span className="text-[#6B7280]">{crumb.label}</span>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-
           {/* Title row + Sort (desktop) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-3">
             <div>

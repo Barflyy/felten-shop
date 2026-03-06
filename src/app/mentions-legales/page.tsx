@@ -13,13 +13,6 @@ export default function MentionsLegalesPage() {
         {/* Header band */}
         <div className="bg-[#1A1A1A] py-12">
           <div className="max-w-[900px] mx-auto px-6 lg:px-8">
-            <nav aria-label="Fil d'Ariane" className="mb-4">
-              <ol className="flex items-center gap-2 text-[12px] text-white/40">
-                <li><Link href="/" className="hover:text-[#DB021D] transition-colors">Accueil</Link></li>
-                <li className="text-white/20">/</li>
-                <li className="text-white/70">Mentions légales</li>
-              </ol>
-            </nav>
             <h1 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-white">
               MENTIONS LÉGALES
             </h1>

@@ -46,24 +46,24 @@ export function PriceDisplay({
 
   const sizeClasses = {
     sm: {
-      main: "text-[14px] lg:text-[15px] font-black",
+      main: "text-[14px] lg:text-[15px] font-bold",
       secondary: "text-[11px]",
       strikethrough: "text-[12px]",
     },
     md: {
-      main: "text-[18px] lg:text-[20px] font-black",
+      main: "text-[18px] lg:text-[20px] font-bold",
       secondary: "text-[12px]",
       strikethrough: "text-[13px]",
     },
     lg: {
-      main: "text-[24px] lg:text-[32px] font-black tracking-tight leading-none",
-      secondary: "text-[13px]",
-      strikethrough: "text-[15px]",
+      main: "text-[22px] lg:text-[28px] font-bold tracking-tight leading-none",
+      secondary: "text-[12px]",
+      strikethrough: "text-[14px]",
     },
     xl: {
-      main: "text-[32px] lg:text-[44px] font-black tracking-tight leading-none",
-      secondary: "text-[14px]",
-      strikethrough: "text-[18px]",
+      main: "text-[28px] lg:text-[36px] font-bold tracking-tight leading-none",
+      secondary: "text-[13px]",
+      strikethrough: "text-[16px]",
     },
   };
 
@@ -75,7 +75,6 @@ export function PriceDisplay({
         <div className="flex flex-wrap items-baseline gap-2">
           <span
             className={`${classes.main} text-[#1A1A1A]`}
-            style={{ fontFamily: "var(--font-oswald)" }}
           >
             {fmtPrice(htPrice)} €
           </span>
@@ -94,7 +93,7 @@ export function PriceDisplay({
                 {fmtPrice(compareHT)} €
               </span>
               {showSavings && (
-                <span className="ml-2 text-[12px] font-bold text-white bg-[#DB021D] px-2 py-0.5 rounded-full">
+                <span className="ml-2 text-[11px] font-semibold text-[#DB021D] bg-red-50 px-2 py-0.5 rounded">
                   Économisez {fmtPrice(compareHT - htPrice)} €
                 </span>
               )}
@@ -113,7 +112,7 @@ export function PriceDisplay({
       <div className="flex flex-wrap items-baseline gap-2">
         <span
           className={`${classes.main} text-[#1A1A1A]`}
-          style={{ fontFamily: "var(--font-oswald)" }}
+
         >
           {fmtPrice(ttcPrice)} €
         </span>
@@ -174,7 +173,7 @@ export function PriceDisplayCompact({
     return (
       <div className="space-y-0.5">
         <div className="flex items-baseline gap-1.5">
-          <span className="text-sm font-black text-[#DB021D]">
+          <span className="text-sm font-bold text-[#1A1A1A]">
             {fmtPrice(htPrice)} €
           </span>
           <span className="text-[10px] text-zinc-500">HT</span>

@@ -53,20 +53,20 @@ export function ImageGallery({
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square bg-gradient-to-br from-zinc-100 to-zinc-50 rounded-2xl flex flex-col items-center justify-center">
-        <Package className="w-16 h-16 text-zinc-300 mb-2" />
-        <span className="text-zinc-400 text-sm">{title}</span>
+      <div className="aspect-square bg-white rounded-xl flex flex-col items-center justify-center">
+        <Package className="w-12 h-12 text-gray-200 mb-2" />
+        <span className="text-[#9CA3AF] text-sm">{title}</span>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Mobile: Full-screen edge-to-edge immersive slider */}
+      {/* Mobile: Edge-to-edge slider */}
       <div className="lg:hidden -mx-4">
-        <div className="relative bg-gradient-to-b from-zinc-100/80 to-white">
+        <div className="relative bg-white">
           {isNew && (
-            <span className="absolute top-4 left-4 z-10 px-3 py-1 bg-[#111] text-white text-[10px] font-black uppercase tracking-wider rounded-md">
+            <span className="absolute top-3 left-3 z-10 px-2.5 py-1 bg-[#1A1A1A] text-white text-[10px] font-semibold uppercase tracking-wider rounded">
               Nouveau
             </span>
           )}
@@ -77,12 +77,12 @@ export function ImageGallery({
           >
             {images.map((image, index) => (
               <div key={index} className="flex-shrink-0 w-full snap-center">
-                <div className="relative aspect-[16/9]">
+                <div className="relative aspect-square">
                   <Image
                     src={image.url}
                     alt={image.altText || title}
                     fill
-                    className="object-contain p-6"
+                    className="object-contain p-8"
                     sizes="100vw"
                     priority={index === 0}
                   />
@@ -91,12 +91,9 @@ export function ImageGallery({
             ))}
           </div>
 
-          {/* Floating pagination capsule */}
+          {/* Pagination dots */}
           {images.length > 1 && (
-            <div
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-[5px] bg-black/20 backdrop-blur-md px-2.5 py-1.5"
-              style={{ borderRadius: 20 }}
-            >
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
               {images.map((_, index) => (
                 <button
                   key={index}
@@ -106,14 +103,11 @@ export function ImageGallery({
                       behavior: 'smooth',
                     });
                   }}
-                  className="transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                  style={{
-                    width: activeIndex === index ? 16 : 6,
-                    height: 6,
-                    borderRadius: 3,
-                    backgroundColor:
-                      activeIndex === index ? '#ffffff' : 'rgba(255,255,255,0.5)',
-                  }}
+                  className={`rounded-full transition-all duration-200 ${
+                    activeIndex === index
+                      ? 'w-5 h-1.5 bg-[#1A1A1A]'
+                      : 'w-1.5 h-1.5 bg-gray-300'
+                  }`}
                   aria-label={`Image ${index + 1}`}
                 />
               ))}
@@ -122,26 +116,25 @@ export function ImageGallery({
         </div>
       </div>
 
-      {/* Desktop: Vertical thumbnails LEFT + main image RIGHT */}
+      {/* Desktop: Thumbnails left + main image right */}
       <div className="hidden lg:flex gap-3">
-        {/* Thumbnail strip — vertical */}
         {images.length > 1 && (
-          <div className="flex flex-col gap-2 overflow-y-auto scrollbar-hide w-[72px] flex-shrink-0 max-h-[600px]">
+          <div className="flex flex-col gap-2 overflow-y-auto scrollbar-hide w-[68px] flex-shrink-0 max-h-[560px]">
             {images.map((image, index) => (
               <button
                 key={index}
                 onClick={() => handleThumbnailClick(index)}
-                className={`relative w-[72px] h-[72px] flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all duration-200 ${activeIndex === index
-                    ? 'border-[#DB021D] ring-1 ring-[#DB021D]/20 shadow-sm'
-                    : 'border-zinc-200 hover:border-zinc-300'
+                className={`relative w-[68px] h-[68px] flex-shrink-0 rounded-lg overflow-hidden border transition-all ${activeIndex === index
+                    ? 'border-[#1A1A1A]'
+                    : 'border-gray-200 hover:border-gray-300'
                   }`}
               >
                 <Image
                   src={image.url}
                   alt={image.altText || `${title} ${index + 1}`}
                   fill
-                  className="object-contain p-2"
-                  sizes="72px"
+                  className="object-contain p-1.5"
+                  sizes="68px"
                 />
               </button>
             ))}
@@ -149,23 +142,21 @@ export function ImageGallery({
         )}
 
         {/* Main image */}
-        <div className="relative flex-1 aspect-square bg-gradient-to-br from-zinc-50 to-white rounded-2xl overflow-hidden group">
+        <div className="relative flex-1 aspect-square bg-white rounded-xl overflow-hidden">
           {isNew && (
-            <span className="absolute top-5 left-5 z-10 px-3 py-1 bg-[#DB021D] text-white text-[11px] font-bold uppercase tracking-wider rounded shadow-md">
+            <span className="absolute top-4 left-4 z-10 px-2.5 py-1 bg-[#1A1A1A] text-white text-[10px] font-semibold uppercase tracking-wider rounded">
               Nouveau
             </span>
           )}
-          <div className="absolute inset-0 bg-white">
-            <Image
-              key={activeIndex}
-              src={images[activeIndex]?.url || images[0].url}
-              alt={images[activeIndex]?.altText || title}
-              fill
-              className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              priority
-            />
-          </div>
+          <Image
+            key={activeIndex}
+            src={images[activeIndex]?.url || images[0].url}
+            alt={images[activeIndex]?.altText || title}
+            fill
+            className="object-contain p-10"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            priority
+          />
         </div>
       </div>
     </div>

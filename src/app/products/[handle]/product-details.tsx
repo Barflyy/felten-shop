@@ -902,27 +902,6 @@ export function ProductDetails({ product, relatedProducts = [] }: ProductDetails
       <main data-product-page="true" className="bg-white lg:min-h-screen lg:pb-12">
         {/* Main Content */}
         <div className="max-w-[1400px] xl:max-w-[1600px] mx-auto px-4 lg:px-8 xl:px-12 pt-18 lg:pt-26">
-          {/* Back Button + Breadcrumbs */}
-          <div className="flex items-center gap-3 mb-3 lg:mb-6">
-            <button
-              onClick={() => window.history.back()}
-              className="flex-shrink-0 w-10 h-10 lg:w-8 lg:h-8 flex items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200 active:scale-95 transition-all"
-              aria-label="Retour"
-            >
-              <ChevronLeft className="w-5 h-5 lg:w-4 lg:h-4 text-zinc-600" />
-            </button>
-            <nav aria-label="Fil d'Ariane" className="flex items-center gap-1.5 text-[11px] lg:text-xs text-zinc-400 whitespace-nowrap overflow-hidden">
-              <Link href="/" className="hover:text-[#DB021D] transition-colors flex-shrink-0">Accueil</Link>
-              {product.productType && (
-                <>
-                  <ChevronRight className="w-3 h-3 flex-shrink-0" />
-                  <span className="text-zinc-400 flex-shrink-0">{product.productType}</span>
-                </>
-              )}
-              <ChevronRight className="w-3 h-3 flex-shrink-0" />
-              <span className="text-zinc-600 font-medium truncate max-w-[160px] lg:max-w-[200px]">{mainTitle}</span>
-            </nav>
-          </div>
 
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 xl:gap-16">
 

@@ -205,26 +205,6 @@ export default function ProductPage() {
         </div>
       </header>
 
-      {/* ── Breadcrumb ── */}
-      <nav className="px-4 py-2.5 bg-zinc-50 border-b border-zinc-100" aria-label="Fil d'ariane">
-        <ol className="flex items-center gap-1.5 text-[11px] text-zinc-400 overflow-x-auto no-scrollbar">
-          <li>
-            <Link href="/" className="hover:text-[#D5101D] transition-colors">
-              Accueil
-            </Link>
-          </li>
-          <li><ChevronRight className="w-3 h-3 flex-shrink-0" /></li>
-          <li>
-            <Link href="/collections/aspirateurs" className="hover:text-[#D5101D] transition-colors">
-              Aspirateurs
-            </Link>
-          </li>
-          <li><ChevronRight className="w-3 h-3 flex-shrink-0" /></li>
-          <li className="text-zinc-700 font-semibold truncate max-w-[180px]">
-            M18 FUEL™ Aspirateur 23L
-          </li>
-        </ol>
-      </nav>
 
       <main data-product-page="true">
         {/* ═══════════════════════════════════════════

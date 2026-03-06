@@ -47,7 +47,7 @@ export default async function ProduitPage({ params }: PageProps) {
 
   const [product, allProducts] = await Promise.all([
     getProduct(handle),
-    getProducts(20),
+    getProducts(8),
   ]);
 
   if (!product) {

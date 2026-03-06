@@ -451,6 +451,7 @@ export function HeaderMegaClient({ produitsMenu, mainMenu }: HeaderMegaClientPro
                                 alt={product.title}
                                 fill
                                 className="object-contain"
+                                sizes="160px"
                               />
                             </div>
                           ) : (

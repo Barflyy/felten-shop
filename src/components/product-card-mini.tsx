@@ -11,7 +11,6 @@ export function ProductCardMini({ product }: { product: Product }) {
     const compareAtPrice = variant?.compareAtPrice;
     const image = product.featuredImage || product.images?.edges[0]?.node;
 
-    // Simplify title
     const title = product.title
         .replace(/M18 FUEL™?\s*/gi, '')
         .replace(/M12 FUEL™?\s*/gi, '')
@@ -24,28 +23,26 @@ export function ProductCardMini({ product }: { product: Product }) {
     return (
         <Link
             href={`/produit/${product.handle}`}
-            className="group block bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-zinc-300 hover:shadow-sm transition-all duration-200"
+            className="group block bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-300 transition-all"
         >
-            {/* Image */}
-            <div className="relative aspect-square bg-[#FAFAFA]">
+            <div className="relative aspect-square bg-white">
                 {image?.url ? (
                     <Image
                         src={image.url}
                         alt={image.altText || product.title}
                         fill
-                        className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                        sizes="260px"
+                        className="object-contain p-4"
+                        sizes="240px"
                     />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-zinc-300 text-sm">Image</span>
+                        <span className="text-gray-200 text-sm">Image</span>
                     </div>
                 )}
             </div>
 
-            {/* Info */}
             <div className="p-3">
-                <h3 className="text-[12px] font-bold text-zinc-800 line-clamp-2 leading-snug mb-2 group-hover:text-[#DB021D] transition-colors uppercase">
+                <h3 className="text-[12px] font-medium text-[#4B5563] line-clamp-2 leading-snug mb-2 group-hover:text-[#1A1A1A] transition-colors">
                     {title}
                 </h3>
                 <PriceDisplayCompact

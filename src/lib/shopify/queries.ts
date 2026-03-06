@@ -15,7 +15,7 @@ export const PRODUCTS_QUERY = `
           tags
           productType
           featuredImage {
-            url
+            url(transform: {maxWidth: 800})
             altText
           }
           priceRange {
@@ -52,7 +52,7 @@ export const PRODUCTS_QUERY = `
           images(first: 1) {
             edges {
               node {
-                url
+                url(transform: {maxWidth: 800})
                 altText
                 width
                 height
@@ -84,7 +84,7 @@ export const PRODUCT_BY_HANDLE_QUERY = `
       images(first: 10) {
         edges {
           node {
-            url
+            url(transform: {maxWidth: 1200})
             altText
             width
             height
@@ -107,7 +107,7 @@ export const PRODUCT_BY_HANDLE_QUERY = `
               currencyCode
             }
             image {
-              url
+              url(transform: {maxWidth: 800})
               altText
               width
               height
@@ -167,7 +167,7 @@ export const COLLECTION_BY_HANDLE_QUERY = `
             tags
             productType
             featuredImage {
-              url
+              url(transform: {maxWidth: 800})
               altText
             }
             priceRange {
@@ -204,7 +204,7 @@ export const COLLECTION_BY_HANDLE_QUERY = `
             images(first: 1) {
               edges {
                 node {
-                  url
+                  url(transform: {maxWidth: 800})
                   altText
                   width
                   height
@@ -604,14 +604,34 @@ export const SEARCH_PRODUCTS_QUERY = `
           id
           title
           handle
+          description
+          tags
+          productType
           featuredImage {
-            url
+            url(transform: {maxWidth: 800})
             altText
           }
           priceRange {
             minVariantPrice {
               amount
               currencyCode
+            }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                title
+                availableForSale
+                price {
+                  amount
+                  currencyCode
+                }
+                compareAtPrice {
+                  amount
+                  currencyCode
+                }
+              }
             }
           }
         }

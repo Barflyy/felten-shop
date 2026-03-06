@@ -177,7 +177,7 @@ export function ProductCardCompact({ product, index = 0, onQuickView }: ProductC
         className="group flex flex-col h-full bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-200 transition-colors"
       >
         {/* ━━ Image Zone ━━ */}
-        <div className="relative aspect-square bg-[#FAFAFA]">
+        <div className="relative aspect-square bg-white">
           {/* System badge — top-left */}
           {badgeLabel && (
             <span className={`absolute top-2 left-2 z-10 ${badgeBg} text-white text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[3px]`}>
