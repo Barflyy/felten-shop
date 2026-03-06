@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function PolitiqueConfidentialitePage() {
   const policies = await getShopPolicies();
-  const policy = policies.privacyPolicy;
+  const policy = policies?.privacyPolicy;
 
   return (
     <>

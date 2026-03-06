@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function CGVPage() {
   const policies = await getShopPolicies();
-  const policy = policies.termsOfService;
+  const policy = policies?.termsOfService;
 
   return (
     <>

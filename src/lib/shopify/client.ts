@@ -30,7 +30,7 @@ export async function shopifyFetch<T>({
   if (!isConfigured) {
     console.warn('Shopify credentials not configured');
     // Return empty data structure for development
-    return { products: { edges: [] }, collections: { edges: [] }, menu: null } as T;
+    return { products: { edges: [] }, collections: { edges: [] }, menu: null, shop: {} } as T;
   }
 
   const response = await fetch(getStorefrontApiUrl(), {
