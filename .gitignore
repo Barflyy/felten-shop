@@ -50,9 +50,9 @@ next-env.d.ts
 milwaukee_specs_results.json
 dev-server.log
 scraper/
-categories/
+/categories/
 /data/
-images/
+/images/
 "images variantes/"
 screenshots/
 

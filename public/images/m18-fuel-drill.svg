@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" fill="none">
+  <!-- Main body -->
+  <path d="M120 140 L320 140 L340 160 L340 240 L320 260 L120 260 L100 240 L100 160 Z" fill="#DB0000"/>
+
+  <!-- Handle grip -->
+  <path d="M140 260 L140 340 L110 340 L110 360 L200 360 L200 340 L170 340 L170 260 Z" fill="#09090b"/>
+  <rect x="125" y="280" width="60" height="8" rx="2" fill="#333"/>
+  <rect x="125" y="295" width="60" height="8" rx="2" fill="#333"/>
+  <rect x="125" y="310" width="60" height="8" rx="2" fill="#333"/>
+  <rect x="125" y="325" width="60" height="8" rx="2" fill="#333"/>
+
+  <!-- Battery pack -->
+  <rect x="200" y="250" width="100" height="70" rx="6" fill="#DB0000"/>
+  <rect x="210" y="320" width="80" height="20" rx="4" fill="#09090b"/>
+  <rect x="220" y="260" width="60" height="8" rx="2" fill="#8B0000"/>
+
+  <!-- Chuck/Front -->
+  <rect x="340" y="170" width="80" height="60" rx="4" fill="#333"/>
+  <rect x="420" y="180" width="60" height="40" rx="2" fill="#666"/>
+  <rect x="480" y="190" width="20" height="20" rx="1" fill="#999"/>
+
+  <!-- Trigger area -->
+  <path d="M130 200 L130 240 L115 240 L115 220 L120 200 Z" fill="#09090b"/>
+
+  <!-- Motor housing detail -->
+  <rect x="180" y="150" width="120" height="100" rx="6" fill="#C00000"/>
+  <rect x="200" y="160" width="80" height="20" rx="3" fill="#8B0000"/>
+
+  <!-- LED light -->
+  <circle cx="320" cy="180" r="8" fill="#FFF" opacity="0.9"/>
+
+  <!-- Ventilation -->
+  <rect x="140" y="160" width="30" height="4" rx="1" fill="#8B0000"/>
+  <rect x="140" y="170" width="30" height="4" rx="1" fill="#8B0000"/>
+  <rect x="140" y="180" width="30" height="4" rx="1" fill="#8B0000"/>
+
+  <!-- Milwaukee logo area -->
+  <rect x="200" y="190" width="80" height="25" rx="3" fill="#FFF" opacity="0.15"/>
+</svg>
