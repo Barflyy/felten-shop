@@ -11,38 +11,10 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-function generateVCard(profile: HubProfile): string {
-  const nameParts = profile.name.split(' ');
-  const lastName = nameParts.pop() || '';
-  const firstName = nameParts.join(' ');
-
-  return [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    `FN:${profile.name}`,
-    `N:${lastName};${firstName};;;`,
-    `ORG:${profile.company}`,
-    `TITLE:${profile.title}`,
-    `TEL;TYPE=CELL:${profile.phone}`,
-    `EMAIL:${profile.email}`,
-    `ADR;TYPE=WORK:;;${profile.address.street};${profile.address.city};;;${profile.address.country}`,
-    `URL:${profile.website}`,
-    profile.bio ? `NOTE:${profile.bio}` : '',
-    'END:VCARD',
-  ]
-    .filter(Boolean)
-    .join('\n');
-}
-
-function downloadVCard(profile: HubProfile) {
-  const vcard = generateVCard(profile);
-  const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${profile.name.replace(/\s+/g, '-').toLowerCase()}.vcf`;
-  a.click();
-  URL.revokeObjectURL(url);
+function saveContact(slug: string) {
+  // Navigate to the API route — the OS intercepts the text/vcard response
+  // and opens the native Contacts app (iOS "Add to Contacts" sheet, Android contact picker)
+  window.location.href = `/api/contact?slug=${slug}`;
 }
 
 function formatPhone(phone: string): string {
@@ -132,7 +104,7 @@ export function HubPage({ profile }: { profile: HubProfile }) {
 
             {/* Save Contact Button */}
             <button
-              onClick={() => downloadVCard(profile)}
+              onClick={() => saveContact(profile.slug)}
               className="mt-5 inline-flex items-center justify-center gap-2 w-full h-12 bg-[#1A1A1A] hover:bg-[#333] text-white text-[14px] font-semibold rounded-xl transition-colors"
             >
               <UserPlus className="w-4 h-4" />
