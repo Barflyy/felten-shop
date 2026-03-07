@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '@/context/cart-context';
@@ -50,6 +50,17 @@ export function StickyAddToCart({
   };
 
   const shouldShow = !mainButtonVisible;
+
+  // Communicate sticky bar presence to WhatsApp button via CSS variable
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--sticky-bar-offset',
+      shouldShow ? '60px' : '0px',
+    );
+    return () => {
+      document.documentElement.style.setProperty('--sticky-bar-offset', '0px');
+    };
+  }, [shouldShow]);
 
   return (
     <div

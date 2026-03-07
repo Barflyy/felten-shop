@@ -66,6 +66,7 @@ export interface Product {
   compareAtPrice?: Money;
   tags?: string[];
   productType?: string;
+  metafields?: (Metafield | null)[];
 }
 
 export interface Collection {

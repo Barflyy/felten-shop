@@ -23,32 +23,32 @@ export function ProductCardMini({ product }: { product: Product }) {
     return (
         <Link
             href={`/produit/${product.handle}`}
-            className="group block bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-300 transition-all"
+            className="group flex flex-col h-full bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-300 transition-all"
         >
-            <div className="relative aspect-square bg-white">
+            <div className="relative bg-[#FAFAFA] flex items-center justify-center h-[180px]">
                 {image?.url ? (
                     <Image
                         src={image.url}
                         alt={image.altText || product.title}
                         fill
-                        className="object-contain p-4"
+                        className="object-contain p-6"
                         sizes="240px"
                     />
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-gray-200 text-sm">Image</span>
-                    </div>
+                    <span className="text-gray-200 text-sm">Image</span>
                 )}
             </div>
 
-            <div className="p-3">
-                <h3 className="text-[12px] font-medium text-[#4B5563] line-clamp-2 leading-snug mb-2 group-hover:text-[#1A1A1A] transition-colors">
+            <div className="p-3 flex flex-col flex-1">
+                <h3 className="text-[12px] font-medium text-[#4B5563] line-clamp-2 leading-snug min-h-[2lh] mb-2 group-hover:text-[#1A1A1A] transition-colors">
                     {title}
                 </h3>
-                <PriceDisplayCompact
-                    priceHT={price?.amount || '0'}
-                    compareAtPriceHT={compareAtPrice?.amount}
-                />
+                <div className="mt-auto">
+                    <PriceDisplayCompact
+                        priceHT={price?.amount || '0'}
+                        compareAtPriceHT={compareAtPrice?.amount}
+                    />
+                </div>
             </div>
         </Link>
     );

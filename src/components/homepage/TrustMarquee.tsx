@@ -17,16 +17,16 @@ export default function TrustMarquee() {
       return (
         <span
           key={`marquee-item-${i}`}
-          className="inline-flex items-center gap-1.5 px-4 lg:px-6 text-white text-[11px] lg:text-[13px] font-bold uppercase tracking-wider whitespace-nowrap"
+          className="inline-flex items-center gap-1.5 px-4 lg:px-6 text-[#1A1A1A] text-[11px] lg:text-[12px] font-medium whitespace-nowrap"
         >
-          <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0" strokeWidth={2.5} />
+          <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 text-[#9CA3AF]" strokeWidth={2} />
           {item.text}
         </span>
       );
     });
 
   return (
-    <div className="bg-[#DB021D] py-2.5 lg:py-3.5 overflow-hidden relative">
+    <div className="bg-[#F5F5F5] py-2.5 lg:py-3 overflow-hidden border-b border-gray-100">
       <div
         className="flex w-max"
         style={{ animation: 'marquee 25s linear infinite' }}

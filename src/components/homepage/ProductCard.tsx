@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Package } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import type { Product } from '@/lib/shopify/types';
 import { formatPrice } from './utils/format';
 
@@ -35,9 +34,7 @@ export default function ProductCard({
   const isAdding = addingId === product.id;
 
   return (
-    <article
-      className="group/card flex-shrink-0 bg-white rounded-xl overflow-hidden flex flex-col shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] transition-all duration-300 h-full"
-    >
+    <article className="group/card flex-shrink-0 bg-white rounded-lg overflow-hidden flex flex-col border border-gray-100 hover:shadow-md transition-shadow duration-200 h-full">
       <Link href={`/produit/${product.handle}`} className="block relative">
         <div className="aspect-square lg:aspect-[4/3] bg-white relative overflow-hidden">
           {product.featuredImage ? (
@@ -46,7 +43,7 @@ export default function ProductCard({
               alt={product.featuredImage.altText || product.title}
               fill
               priority={priority}
-              className="object-contain p-3 lg:p-4 transition-transform duration-500 ease-out group-hover/card:scale-[1.06]"
+              className="object-contain p-3 lg:p-4 transition-transform duration-300 group-hover/card:scale-[1.03]"
               sizes="(max-width: 640px) 44vw, (max-width: 1024px) 45vw, 25vw"
             />
           ) : (
@@ -64,7 +61,7 @@ export default function ProductCard({
           </span>
         )}
         <Link href={`/produit/${product.handle}`}>
-          <h3 className="text-[12px] lg:text-sm font-bold text-[#1A1A1A] line-clamp-2 leading-snug mb-2 lg:mb-3 group-hover/card:text-[#DB021D] transition-colors duration-200">
+          <h3 className="text-[12px] lg:text-sm font-semibold text-[#1A1A1A] line-clamp-2 leading-snug mb-2 lg:mb-3 group-hover/card:text-[#DB021D] transition-colors duration-200">
             {product.title}
           </h3>
         </Link>
@@ -82,7 +79,7 @@ export default function ProductCard({
                     e.preventDefault();
                     setSelectedVariantIdx(idx);
                   }}
-                  className={`flex-1 text-[9px] lg:text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-md transition-all duration-200 cursor-pointer ${
+                  className={`flex-1 text-[9px] lg:text-[10px] font-semibold uppercase tracking-wider py-1.5 rounded-md transition-all duration-200 cursor-pointer ${
                     selectedVariantIdx === idx
                       ? 'bg-white text-[#1A1A1A] shadow-sm'
                       : 'text-[#9CA3AF] hover:text-[#6B7280]'
@@ -97,7 +94,7 @@ export default function ProductCard({
 
         {/* Price */}
         <div className="flex items-baseline gap-1.5">
-          <span className="text-base lg:text-xl font-black text-[#1A1A1A] tabular-nums">
+          <span className="text-base lg:text-xl font-bold text-[#1A1A1A] tabular-nums">
             {formatPrice(price)}&nbsp;€
           </span>
           {comparePrice && parseFloat(comparePrice) > parseFloat(price) && (
@@ -111,7 +108,6 @@ export default function ProductCard({
         {/* Stock */}
         <div className="flex items-center gap-1 mt-1 mb-2 lg:mb-3">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#16A34A] opacity-50" />
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#16A34A]" />
           </span>
           <span className="text-[10px] lg:text-[11px] font-medium text-[#16A34A]">
@@ -120,46 +116,25 @@ export default function ProductCard({
         </div>
 
         {/* CTA */}
-        <motion.button
+        <button
           disabled={!variantId || isAdding}
           onClick={() => {
             if (variantId) onAddToCart(variantId, product.id);
           }}
-          whileTap={{ scale: 0.96 }}
-          className="w-full py-2.5 lg:py-3 text-[10px] lg:text-[11px] font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 transition-all duration-200 disabled:opacity-50 cursor-pointer bg-[#DB021D] text-white hover:bg-[#B8011A] active:bg-[#9A0116] shadow-[0_2px_8px_rgba(219,2,29,0.25)]"
+          className="w-full py-2.5 lg:py-3 text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 transition-colors duration-200 disabled:opacity-50 cursor-pointer bg-[#DB021D] text-white hover:bg-[#B8011A] active:bg-[#9A0116]"
         >
-          <AnimatePresence mode="wait">
-            {isAdding ? (
-              <motion.span
-                key="adding"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                className="flex items-center gap-1.5"
-              >
-                <motion.span
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}
-                  className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full inline-block"
-                />
-                Ajout…
-              </motion.span>
-            ) : (
-              <motion.span
-                key="default"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                className="flex items-center gap-1.5"
-              >
-                <ShoppingCart className="w-3.5 h-3.5" strokeWidth={2.5} />
-                <span className="hidden min-[200px]:inline">AJOUTER</span>
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </motion.button>
+          {isAdding ? (
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full inline-block animate-spin" />
+              Ajout…
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5">
+              <ShoppingCart className="w-3.5 h-3.5" strokeWidth={2} />
+              <span className="hidden min-[200px]:inline">Ajouter</span>
+            </span>
+          )}
+        </button>
       </div>
     </article>
   );

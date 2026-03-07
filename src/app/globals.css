@@ -40,17 +40,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* =====================================================
-   TYPOGRAPHY — DUAL FONT SYSTEM
-   Inter (body/UI) + Barlow Condensed (display headings)
-   ===================================================== */
-
-/* H1/H2 get the condensed display font by default.
-   H3 and below use Inter (inherited from body).
-   Components can override with font-sans (Inter) or font-display (Barlow). */
-h1, h2 {
-  font-family: var(--font-display), var(--font-inter), sans-serif;
-}
+/* Typography — Inter everywhere, Barlow only on explicit opt-in via style={{ fontFamily: 'var(--font-display)' }} */
 
 /* Smooth scrolling — only for in-page anchor jumps, not SPA navigations */
 html {

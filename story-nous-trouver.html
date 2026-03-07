@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>Story — Nous Trouver</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: #111111;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  .frame {
+    width: 1080px;
+    height: 1920px;
+    position: relative;
+    overflow: hidden;
+    background: #111111;
+  }
+
+  /* ── BACKGROUNDS ── */
+  .bg-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 900px 700px at 110% -5%, rgba(219,2,29,0.28) 0%, transparent 60%),
+      radial-gradient(ellipse 700px 600px at -10% 105%, rgba(219,2,29,0.18) 0%, transparent 55%),
+      linear-gradient(175deg, #161616 0%, #0e0e0e 50%, #131313 100%);
+    z-index: 0;
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    background-size: 200px;
+    opacity: 0.4;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .lines {
+    position: absolute;
+    inset: -100%;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      -55deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,0.012) 60px,
+      rgba(255,255,255,0.012) 61px
+    );
+  }
+
+  /* ── TOP RED BAR ── */
+  .top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #DB021D 0%, #FF3B53 50%, #DB021D 100%);
+    z-index: 20;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    padding: 70px 70px 60px;
+  }
+
+  /* ── LOGO HEADER ── */
+  .logo-zone {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 50px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 60px;
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 52px;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    color: white;
+  }
+  .logo-felten {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 6px;
+  }
+  .logo-felten::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: #DB021D;
+    border-radius: 2px;
+  }
+  .logo-shop {
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    margin-left: 8px;
+  }
+  .logo-badge {
+    font-family: 'Barlow', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 18px;
+    border-radius: 100px;
+  }
+
+  /* ── HERO TITLE ── */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 60px;
+  }
+  .hero-eyebrow {
+    font-family: 'Barlow', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: #DB021D;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 2px;
+    background: #DB021D;
+    border-radius: 2px;
+  }
+  .hero-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 130px;
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: -1px;
+  }
+  .hero-title .accent {
+    color: #DB021D;
+  }
+
+  /* ── INFO CARDS ── */
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 36px 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: #DB021D;
+    border-radius: 20px 0 0 20px;
+  }
+
+  .card-icon {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    border-radius: 16px;
+    background: rgba(219, 2, 29, 0.12);
+    border: 1px solid rgba(219, 2, 29, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .card-icon svg {
+    width: 34px;
+    height: 34px;
+    fill: #DB021D;
+  }
+
+  .card-body {
+    flex: 1;
+  }
+
+  .card-label {
+    font-family: 'Barlow', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .card-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 46px;
+    color: #FFFFFF;
+    line-height: 1.05;
+    letter-spacing: 0.5px;
+  }
+
+  .card-value .sub {
+    display: block;
+    font-size: 34px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* ── CONTACT CARD SPECIAL ── */
+  .card-contact {
+    background: rgba(219, 2, 29, 0.07);
+    border-color: rgba(219, 2, 29, 0.2);
+  }
+  .card-contact::before {
+    background: linear-gradient(180deg, #DB021D, #FF3B53);
+  }
+  .card-contact .card-icon {
+    background: rgba(219,2,29,0.2);
+    border-color: rgba(219,2,29,0.35);
+  }
+  .card-contact .card-value {
+    font-size: 52px;
+    color: #FFFFFF;
+  }
+  .card-contact .card-label {
+    color: rgba(219, 100, 100, 0.7);
+  }
+
+  /* ── BOTTOM ── */
+  .bottom {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 36px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .website {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 46px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.2);
+  }
+  .website span {
+    color: #DB021D;
+  }
+
+  .bottom-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(219,2,29,0.1);
+    border: 1px solid rgba(219,2,29,0.2);
+    border-radius: 100px;
+    padding: 12px 24px;
+  }
+  .bottom-badge-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #DB021D;
+    box-shadow: 0 0 10px rgba(219,2,29,0.8);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .bottom-badge-text {
+    font-family: 'Barlow', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+  }
+
+  /* ── BOTTOM RED BAR ── */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #DB021D 0%, #FF3B53 50%, #DB021D 100%);
+    z-index: 20;
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="bg-gradient"></div>
+  <div class="grain"></div>
+  <div class="lines"></div>
+  <div class="top-bar"></div>
+  <div class="bottom-bar"></div>
+
+  <div class="content">
+
+    <!-- LOGO -->
+    <div class="logo-zone">
+      <div class="logo">
+        <span class="logo-felten">FELTEN</span><span class="logo-shop">SHOP</span>
+      </div>
+      <div class="logo-badge">Weicherdange</div>
+    </div>
+
+    <!-- HERO TITLE -->
+    <div class="hero">
+      <div class="hero-eyebrow">Showroom</div>
+      <div class="hero-title">NOUS<br><span class="accent">TROUVER</span></div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+
+      <!-- ADRESSE -->
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Adresse</div>
+          <div class="card-value">
+            Bei der Kapell, 10
+            <span class="sub">L-9775 Weicherdange (Clervaux)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HORAIRES -->
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Horaires</div>
+          <div class="card-value">
+            Lun — Ven &nbsp; 9h – 18h
+            <span class="sub">Samedi &nbsp; 9h – 12h</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT FLORIAN -->
+      <div class="card card-contact">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Contact — Florian Drouven</div>
+          <div class="card-value">
+            +352 621 304 952
+            <span class="sub">florian@felten.lu</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="bottom">
+      <div class="website"><span>felten</span>.lu</div>
+      <div class="bottom-badge">
+        <div class="bottom-badge-dot"></div>
+        <div class="bottom-badge-text">Revendeur Agréé</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

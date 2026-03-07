@@ -199,36 +199,46 @@ function readAndGroupCSV(filePath: string): GroupedProduct[] {
   return [...grouped.values()];
 }
 
-// ─── Fetch existing product handles ──────────────────────────────────────────
+// ─── Fetch existing products with variant details ───────────────────────────
 
-async function fetchExistingHandles(): Promise<Set<string>> {
-  const handles = new Set<string>();
-  let cursor: string | null = null;
+interface ExistingVariant { id: number; sku: string; price: string; option1: string }
+interface ExistingProduct { id: number; handle: string; variants: ExistingVariant[] }
+
+async function fetchExistingProducts(): Promise<Map<string, ExistingProduct>> {
+  const token = await getToken();
+  const products = new Map<string, ExistingProduct>();
+  let sinceId = 0;
 
   while (true) {
-    const data = await gql<{
-      products: {
-        edges: { node: { handle: string } }[];
-        pageInfo: { hasNextPage: boolean; endCursor: string | null };
-      };
-    }>(`query($cursor: String) {
-      products(first: 250, after: $cursor) {
-        edges { node { handle } }
-        pageInfo { hasNextPage endCursor }
-      }
-    }`, { cursor });
-
-    for (const e of data.products.edges) handles.add(e.node.handle);
-    if (!data.products.pageInfo.hasNextPage) break;
-    cursor = data.products.pageInfo.endCursor;
+    const res = await fetch(
+      `https://${STORE_DOMAIN}/admin/api/${ADMIN_API_VERSION}/products.json?limit=250&since_id=${sinceId}&fields=id,handle,variants`,
+      { headers: { 'X-Shopify-Access-Token': token } }
+    );
+    if (res.status === 429) {
+      const retryAfter = parseFloat(res.headers.get('Retry-After') || '2');
+      await sleep(retryAfter * 1000);
+      continue;
+    }
+    if (!res.ok) throw new Error(`Fetch products error: ${res.status}`);
+    const json = await res.json();
+    const batch = json.products as { id: number; handle: string; variants: { id: number; sku: string; price: string; option1: string }[] }[];
+    if (batch.length === 0) break;
+    for (const p of batch) {
+      products.set(p.handle, {
+        id: p.id,
+        handle: p.handle,
+        variants: p.variants.map(v => ({ id: v.id, sku: v.sku, price: v.price, option1: v.option1 })),
+      });
+      sinceId = Math.max(sinceId, p.id);
+    }
   }
 
-  return handles;
+  return products;
 }
 
 // ─── Create product via REST API ─────────────────────────────────────────────
 
-async function createProduct(product: GroupedProduct): Promise<{ id: number; handle: string }> {
+async function createProduct(product: GroupedProduct): Promise<{ id: number; handle: string; skipped: boolean }> {
   const token = await getToken();
 
   // Build variants
@@ -291,11 +301,82 @@ async function createProduct(product: GroupedProduct): Promise<{ id: number; han
       await sleep(retryAfter * 1000);
       return createProduct(product);
     }
+    // Treat "already exists" as a skip, not an error
+    if (res.status === 422 && text.includes('already exists')) {
+      return { id: 0, handle: product.handle, skipped: true };
+    }
     throw new Error(`${res.status}: ${text.slice(0, 300)}`);
   }
 
   const json = await res.json();
-  return { id: json.product.id, handle: json.product.handle };
+  return { id: json.product.id, handle: json.product.handle, skipped: false };
+}
+
+// ─── Update existing product ─────────────────────────────────────────────────
+
+async function updateProduct(
+  existing: ExistingProduct,
+  csvProduct: GroupedProduct,
+): Promise<{ priceChanges: number; updated: boolean }> {
+  const token = await getToken();
+  let priceChanges = 0;
+
+  // Build variant updates — match by SKU first, then by option1
+  const variantUpdates: Record<string, unknown>[] = [];
+  for (const csvVariant of csvProduct.variants) {
+    const match = existing.variants.find(v => v.sku && v.sku === csvVariant.sku)
+      || existing.variants.find(v => v.option1 === csvVariant.option1Value);
+
+    if (match) {
+      const csvPrice = parseFloat(csvVariant.price).toFixed(2);
+      const existingPrice = parseFloat(match.price).toFixed(2);
+      if (csvPrice !== existingPrice) {
+        priceChanges++;
+        console.log(`    ${csvProduct.handle} [${match.sku || match.option1}]: ${existingPrice} → ${csvPrice}`);
+      }
+      variantUpdates.push({
+        id: match.id,
+        price: csvPrice,
+        sku: csvVariant.sku,
+        option1: csvVariant.option1Value || 'Default',
+      });
+    }
+  }
+
+  // PUT product update
+  const body = {
+    product: {
+      id: existing.id,
+      title: csvProduct.title,
+      vendor: csvProduct.vendor,
+      product_type: csvProduct.productType,
+      tags: csvProduct.tags,
+      body_html: csvProduct.body,
+      ...(variantUpdates.length > 0 ? { variants: variantUpdates } : {}),
+    },
+  };
+
+  const res = await fetch(
+    `https://${STORE_DOMAIN}/admin/api/${ADMIN_API_VERSION}/products/${existing.id}.json`,
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': token },
+      body: JSON.stringify(body),
+    }
+  );
+
+  if (res.status === 429) {
+    const retryAfter = parseFloat(res.headers.get('Retry-After') || '2');
+    await sleep(retryAfter * 1000);
+    return updateProduct(existing, csvProduct);
+  }
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`${res.status}: ${text.slice(0, 300)}`);
+  }
+
+  return { priceChanges, updated: true };
 }
 
 // ─── Publish to all sales channels ──────────────────────────────────────────
@@ -353,57 +434,92 @@ async function main() {
   }
   console.log(`\nImages: ${imagesFound} found, ${imagesMissing} missing\n`);
 
-  // Fetch existing
+  // Fetch existing products with variant details
   console.log('Fetching existing products...');
-  const existing = await fetchExistingHandles();
+  const existing = await fetchExistingProducts();
   console.log(`${existing.size} products already on Shopify.\n`);
 
-  // Filter out existing
+  // Split into new vs existing
   const toCreate = products.filter(p => !existing.has(p.handle));
-  console.log(`${toCreate.length} new products to create.\n`);
+  const toUpdate = products.filter(p => existing.has(p.handle));
+  console.log(`${toCreate.length} new products to create.`);
+  console.log(`${toUpdate.length} existing products to check for price updates.\n`);
 
-  if (toCreate.length === 0) {
-    console.log('Nothing to import!');
-    return;
+  // ─── Phase 1: Update existing products ──────────────────────────
+  let updated = 0;
+  let pricesUpdated = 0;
+  let updateErrors = 0;
+  if (toUpdate.length > 0) {
+    console.log('Phase 1: Updating existing products...\n');
+    for (let i = 0; i < toUpdate.length; i++) {
+      const csvProduct = toUpdate[i];
+      const existingProduct = existing.get(csvProduct.handle)!;
+      try {
+        const result = await updateProduct(existingProduct, csvProduct);
+        if (result.updated) updated++;
+        pricesUpdated += result.priceChanges;
+      } catch (err) {
+        updateErrors++;
+        if (updateErrors <= 10) console.error(`  ERR  ${csvProduct.handle}: ${(err as Error).message.slice(0, 200)}`);
+      }
+      // Rate limit
+      await sleep(300);
+    }
+    const pct = Math.round((updated / toUpdate.length) * 100);
+    console.log(`\n  Updated: ${updated}/${toUpdate.length} products`);
+    console.log(`  Price changes: ${pricesUpdated} variants`);
+    if (updateErrors > 0) console.log(`  Update errors: ${updateErrors}`);
+    console.log('');
   }
 
-  console.log('Starting import...\n');
-
+  // ─── Phase 2: Create new products ────────────────────────────────
   let created = 0;
+  let skipped = 0;
   let errors = 0;
   const errorDetails: string[] = [];
 
-  for (let i = 0; i < toCreate.length; i++) {
-    const product = toCreate[i];
-    try {
-      const result = await createProduct(product);
+  if (toCreate.length > 0) {
+    console.log('Phase 2: Creating new products...\n');
 
-      // Publish to all channels
-      const productGid = `gid://shopify/Product/${result.id}`;
+    for (let i = 0; i < toCreate.length; i++) {
+      const product = toCreate[i];
       try {
-        await publishToAllChannels(productGid);
-      } catch {
-        // Non-fatal
+        const result = await createProduct(product);
+
+        if (result.skipped) {
+          skipped++;
+          console.log(`  [SKIP] ${product.handle} — already exists on Shopify`);
+        } else {
+          // Publish to all channels
+          const productGid = `gid://shopify/Product/${result.id}`;
+          try {
+            await publishToAllChannels(productGid);
+          } catch {
+            // Non-fatal
+          }
+
+          created++;
+          const pct = Math.round(((i + 1) / toCreate.length) * 100);
+          console.log(`  [${pct}%] ${created}/${toCreate.length} — ${product.title} (${product.variants.length} variant${product.variants.length > 1 ? 's' : ''})`);
+        }
+      } catch (err) {
+        errors++;
+        const msg = `${product.handle}: ${(err as Error).message}`;
+        errorDetails.push(msg);
+        if (errors <= 20) console.error(`  ERR  ${msg.slice(0, 250)}`);
       }
 
-      created++;
-      const pct = Math.round(((i + 1) / toCreate.length) * 100);
-      console.log(`  [${pct}%] ${created}/${toCreate.length} — ${product.title} (${product.variants.length} variant${product.variants.length > 1 ? 's' : ''})`);
-    } catch (err) {
-      errors++;
-      const msg = `${product.handle}: ${(err as Error).message}`;
-      errorDetails.push(msg);
-      if (errors <= 20) console.error(`  ERR  ${msg.slice(0, 250)}`);
+      // Rate limit
+      await sleep(product.variants.length > 3 ? 1500 : 1000);
     }
-
-    // Rate limit
-    await sleep(product.variants.length > 3 ? 1500 : 1000);
   }
 
   console.log(`\n=== Done ===`);
+  console.log(`  Updated: ${updated}`);
   console.log(`  Created: ${created}`);
-  console.log(`  Errors: ${errors}`);
-  console.log(`  Skipped (existing): ${products.length - toCreate.length}`);
+  console.log(`  Skipped (already exist): ${skipped}`);
+  console.log(`  Price changes: ${pricesUpdated} variants`);
+  console.log(`  Errors: ${errors + updateErrors}`);
 
   if (errorDetails.length > 0 && errorDetails.length <= 30) {
     console.log('\nError details:');

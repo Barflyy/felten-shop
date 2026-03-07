@@ -566,6 +566,50 @@ export async function setInventoryQuantities(
   }
 }
 
+export async function setCustomerProPending(email: string, vatData: {
+  vatNumber: string;
+  countryCode: string;
+  companyName: string;
+}) {
+  // Find customer by email via Admin API
+  const searchData = await adminFetch<{
+    customers: {
+      edges: { node: { id: string } }[];
+    };
+  }>(`
+    query FindCustomer($query: String!) {
+      customers(first: 1, query: $query) {
+        edges { node { id } }
+      }
+    }
+  `, { query: `email:${email}` });
+
+  const customerGid = searchData.customers.edges[0]?.node.id;
+  if (!customerGid) {
+    console.error(`Customer not found for email: ${email}`);
+    return;
+  }
+
+  // Set metafields with pending status
+  await setMetafields(customerGid, [
+    { namespace: 'custom', key: 'vat_number', value: vatData.vatNumber, type: 'single_line_text_field' },
+    { namespace: 'custom', key: 'vat_country_code', value: vatData.countryCode, type: 'single_line_text_field' },
+    { namespace: 'custom', key: 'company_name', value: vatData.companyName, type: 'single_line_text_field' },
+    { namespace: 'custom', key: 'vat_status', value: 'pending', type: 'single_line_text_field' },
+  ]);
+
+  // Tag as pending — Nathan reviews in Shopify admin and changes to "pro" when approved
+  await adminFetch<{
+    tagsAdd: { userErrors: { field: string[]; message: string }[] };
+  }>(`
+    mutation TagsAdd($id: ID!, $tags: [String!]!) {
+      tagsAdd(id: $id, tags: $tags) {
+        userErrors { field message }
+      }
+    }
+  `, { id: customerGid, tags: ['pro-pending', 'tva-vies-ok'] });
+}
+
 export async function createSmartCollection(input: {
   title: string;
   descriptionHtml?: string;

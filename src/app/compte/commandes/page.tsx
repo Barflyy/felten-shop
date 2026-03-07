@@ -1,36 +1,36 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Package, ChevronRight, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Package, Download, Loader2 } from 'lucide-react';
 import { useCustomer } from '@/context/customer-context';
-import { Footer } from '@/components/footer';
 
 function orderStatusLabel(status: string): { label: string; color: string } {
   switch (status.toLowerCase()) {
-    case 'paid': return { label: 'Payée', color: 'bg-green-100 text-green-700' };
-    case 'pending': return { label: 'En attente', color: 'bg-yellow-100 text-yellow-700' };
+    case 'paid': return { label: 'Payée', color: 'bg-emerald-50 text-emerald-700' };
+    case 'pending': return { label: 'En attente', color: 'bg-yellow-50 text-yellow-700' };
     case 'refunded': return { label: 'Remboursée', color: 'bg-gray-100 text-gray-600' };
-    case 'partially_refunded': return { label: 'Partiel. remb.', color: 'bg-orange-100 text-orange-700' };
-    case 'authorized': return { label: 'Autorisée', color: 'bg-blue-100 text-blue-700' };
+    case 'partially_refunded': return { label: 'Partiel. remb.', color: 'bg-orange-50 text-orange-700' };
+    case 'authorized': return { label: 'Autorisée', color: 'bg-blue-50 text-blue-700' };
     default: return { label: status, color: 'bg-gray-100 text-gray-600' };
   }
 }
 
 function fulfillmentLabel(status: string): { label: string; color: string } {
   switch (status.toLowerCase()) {
-    case 'fulfilled': return { label: 'Expédiée', color: 'text-green-600' };
-    case 'unfulfilled': return { label: 'En préparation', color: 'text-yellow-600' };
+    case 'fulfilled': return { label: 'Expédiée', color: 'text-emerald-600' };
+    case 'unfulfilled': return { label: 'En préparation', color: 'text-amber-600' };
     case 'partial': return { label: 'Partiellement expédiée', color: 'text-orange-600' };
-    default: return { label: status, color: 'text-gray-500' };
+    default: return { label: status || 'En préparation', color: 'text-[#6B7280]' };
   }
 }
 
 export default function CommandesPage() {
   const router = useRouter();
   const { customer, isLoading, isAuthenticated } = useCustomer();
+  const [downloadingIds, setDownloadingIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -38,10 +38,37 @@ export default function CommandesPage() {
     }
   }, [isLoading, isAuthenticated, router]);
 
+  const downloadInvoice = async (orderNumber: number) => {
+    setDownloadingIds(prev => new Set(prev).add(orderNumber));
+    try {
+      const token = localStorage.getItem('shopify_customer_token');
+      const res = await fetch(`/api/invoice/${orderNumber}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `facture-ShopFelten-${orderNumber}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (e) {
+      console.error('Invoice download error:', e);
+    } finally {
+      setDownloadingIds(prev => {
+        const next = new Set(prev);
+        next.delete(orderNumber);
+        return next;
+      });
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-gray-200 border-t-[#DB021D] rounded-full animate-spin" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-gray-200 border-t-[#1A1A1A] rounded-full animate-spin" />
       </div>
     );
   }
@@ -51,102 +78,113 @@ export default function CommandesPage() {
   const orders = customer.orders.edges.map((e) => e.node);
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] flex flex-col">
-      {/* Header — Clean & Premium */}
-      <header className="fixed top-0 inset-x-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
-        <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/compte" className="w-10 h-10 flex items-center justify-center -ml-2 text-[#1A1A1A] hover:bg-gray-50 rounded-full transition-colors" aria-label="Retour à mon espace">
-            <ArrowLeft className="w-6 h-6" strokeWidth={2} />
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+        <div className="max-w-[640px] mx-auto px-4 h-14 flex items-center gap-3">
+          <Link href="/compte" className="w-9 h-9 flex items-center justify-center -ml-1 text-[#1A1A1A]" aria-label="Retour">
+            <ArrowLeft className="w-5 h-5" strokeWidth={2} />
           </Link>
-          <div className="flex items-baseline gap-0.5">
-            <span className="text-[17px] font-black uppercase tracking-tight text-[#1A1A1A]" style={{ fontFamily: 'var(--font-display)' }}>
-              Mes commandes
-            </span>
-          </div>
-          <div className="w-10" />
+          <h1 className="text-[15px] font-semibold text-[#1A1A1A]">Mes commandes</h1>
         </div>
       </header>
 
-      <main className="flex-1 max-w-[680px] mx-auto w-full px-6 pt-24 pb-20">
+      <main className="flex-1 max-w-[640px] mx-auto w-full px-4 py-8">
         {orders.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100 shadow-sm">
-              <ShoppingBag className="w-7 h-7 text-[#DB021D]" strokeWidth={2} />
+          <div className="text-center py-16">
+            <div className="w-12 h-12 bg-[#F5F5F5] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="w-5 h-5 text-[#9CA3AF]" strokeWidth={2} />
             </div>
-            <p className="text-[20px] font-black uppercase tracking-tight text-[#1A1A1A] mb-2" style={{ fontFamily: 'var(--font-display)' }}>Aucune commande</p>
-            <p className="text-[14px] font-medium text-gray-500 mb-8 max-w-[250px] mx-auto">Vous n&apos;avez pas encore passé de commande sur Felten Shop.</p>
+            <p className="text-[15px] font-semibold text-[#1A1A1A] mb-1">Aucune commande</p>
+            <p className="text-[13px] text-[#9CA3AF] mb-6">Vous n&apos;avez pas encore passé de commande.</p>
             <Link
               href="/collections"
-              className="group inline-flex items-center justify-center h-12 px-8 bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white text-[13px] font-black uppercase tracking-[0.1em] rounded-xl transition-all shadow-md active:scale-[0.98] overflow-hidden relative"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="inline-flex items-center justify-center h-11 px-6 bg-[#1A1A1A] hover:bg-[#333] text-white text-[13px] font-semibold rounded-lg transition-colors"
             >
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-              <span className="relative z-10 flex items-center gap-2">Découvrir le catalogue</span>
+              Découvrir le catalogue
             </Link>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="space-y-3">
             {orders.map((order) => {
               const payStatus = orderStatusLabel(order.financialStatus);
               const shipStatus = fulfillmentLabel(order.fulfillmentStatus);
               const lineItems = order.lineItems.edges.map((e) => e.node);
               const firstImage = lineItems[0]?.variant?.image?.url || lineItems[0]?.variant?.product?.featuredImage?.url;
+              const isDownloading = downloadingIds.has(order.orderNumber);
+              const isPaid = order.financialStatus.toLowerCase() === 'paid';
 
               return (
-                <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:border-gray-200 transition-all group cursor-pointer active:scale-[0.99]">
+                <div key={order.id} className="border border-gray-100 rounded-lg overflow-hidden">
                   {/* Order header */}
-                  <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+                  <div className="px-4 py-3 flex items-center justify-between bg-[#F5F5F5]">
                     <div>
-                      <p className="text-[14px] font-bold text-[#1A1A1A] mb-0.5">Commande <span style={{ fontFamily: 'var(--font-oswald)' }}>#{order.orderNumber}</span></p>
-                      <p className="text-[12px] font-medium text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[13px] font-semibold text-[#1A1A1A]">
+                          #{order.orderNumber}
+                        </p>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${payStatus.color}`}>
+                          {payStatus.label}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#9CA3AF] mt-0.5">
                         {new Date(order.processedAt).toLocaleDateString('fr-BE', { day: '2-digit', month: 'long', year: 'numeric' })}
                       </p>
                     </div>
-                    <span className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest ${payStatus.color}`}>
-                      {payStatus.label}
-                    </span>
+                    <p className="text-[14px] font-semibold text-[#1A1A1A] flex-shrink-0">
+                      {parseFloat(order.totalPrice.amount).toFixed(2)} €
+                    </p>
                   </div>
 
                   {/* Order body */}
-                  <div className="p-5 flex items-center gap-4">
+                  <div className="px-4 py-3 flex items-center gap-3">
                     {firstImage ? (
-                      <div className="w-16 h-16 bg-white border border-gray-100 rounded-xl overflow-hidden flex-shrink-0 shadow-sm p-1.5 relative">
-                        <Image src={firstImage} alt="" fill className="object-contain p-1" sizes="64px" />
+                      <div className="w-12 h-12 bg-white border border-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
+                        <Image src={firstImage} alt="" fill className="object-contain p-1" sizes="48px" />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Package className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
+                      <div className="w-12 h-12 bg-[#F5F5F5] rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Package className="w-4 h-4 text-[#9CA3AF]" strokeWidth={2} />
                       </div>
                     )}
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-[#1A1A1A] leading-snug line-clamp-2">
+                      <p className="text-[13px] font-medium text-[#1A1A1A] line-clamp-1">
                         {lineItems[0]?.title}
-                        {lineItems.length > 1 && <span className="text-gray-400 font-medium ml-1">+{lineItems.length - 1} autre{lineItems.length > 2 ? 's' : ''}</span>}
+                        {lineItems.length > 1 && (
+                          <span className="text-[#9CA3AF]"> +{lineItems.length - 1}</span>
+                        )}
                       </p>
-                      <p className={`text-[12px] font-bold mt-1.5 flex items-center gap-1.5 uppercase tracking-wide ${shipStatus.color}`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      {/* Fulfillment status */}
+                      <p className={`text-[11px] font-medium mt-1 ${shipStatus.color}`}>
                         {shipStatus.label}
                       </p>
                     </div>
-
-                    <div className="text-right flex-shrink-0 flex flex-col items-end justify-center">
-                      <p className="text-[15px] font-black text-[#1A1A1A] mb-1">
-                        {parseFloat(order.totalPrice.amount).toFixed(2)} €
-                      </p>
-                      <div className="w-7 h-7 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-[#DB021D] group-hover:text-white transition-colors">
-                        <ChevronRight className="w-4 h-4" />
-                      </div>
-                    </div>
                   </div>
+
+                  {/* Invoice download */}
+                  {isPaid && (
+                    <div className="border-t border-gray-100 px-4 py-2.5">
+                      <button
+                        onClick={() => downloadInvoice(order.orderNumber)}
+                        disabled={isDownloading}
+                        className="flex items-center gap-2 text-[12px] font-medium text-[#6B7280] hover:text-[#1A1A1A] transition-colors disabled:opacity-50"
+                      >
+                        {isDownloading ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Download className="w-3.5 h-3.5" />
+                        )}
+                        Télécharger la facture
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 }

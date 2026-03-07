@@ -116,6 +116,13 @@ export const PRODUCT_BY_HANDLE_QUERY = `
               name
               value
             }
+            metafields(identifiers: [
+              {namespace: "custom", key: "contenu_de_boite"}
+            ]) {
+              namespace
+              key
+              value
+            }
           }
         }
       }

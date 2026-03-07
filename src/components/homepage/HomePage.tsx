@@ -6,7 +6,6 @@ import { Footer } from '@/components/footer';
 import { useCart } from '@/context/cart-context';
 import type { Product } from '@/lib/shopify/types';
 
-import { useScrollEffects } from './hooks/useScrollEffects';
 
 import SiteHeader from '@/components/SiteHeader';
 import HeroSection from './HeroSection';
@@ -17,14 +16,13 @@ import BestsellerCarousel from './BestsellerCarousel';
 
 // Below-fold sections: lazy-loaded to reduce initial JS bundle
 const NewsletterSection = dynamic(() => import('./NewsletterSection'), { ssr: true });
-const BackToTop = dynamic(() => import('./BackToTop'), { ssr: false });
+
 const FloatingBadge = dynamic(() => import('./FloatingBadge'), { ssr: false });
 
 export default function HomePage({ products }: { products: Product[] }) {
   const [addingId, setAddingId] = useState<string | null>(null);
   const { addToCart } = useCart();
 
-  const { showScrollTop, scrollToTop } = useScrollEffects();
 
   const handleAddToCart = useCallback(
     async (variantId: string, productId: string) => {
@@ -63,7 +61,7 @@ export default function HomePage({ products }: { products: Product[] }) {
       <Footer />
 
       <FloatingBadge />
-      <BackToTop visible={showScrollTop} onClick={scrollToTop} />
+
     </div>
   );
 }

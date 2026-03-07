@@ -69,78 +69,32 @@ export function PriceDisplay({
 
   const classes = sizeClasses[size || "lg"];
 
-  if (isPro) {
-    return (
-      <div className="flex flex-col gap-0.5">
-        <div className="flex flex-wrap items-baseline gap-2">
-          <span
-            className={`${classes.main} text-[#1A1A1A]`}
-          >
-            {fmtPrice(htPrice)} €
-          </span>
-          {showLabel && (
-            <span
-              className={`${classes.secondary} font-bold text-zinc-400 uppercase`}
-            >
-              HT
-            </span>
-          )}
-          {hasDiscount && compareHT && (
-            <>
-              <span
-                className={`${classes.strikethrough} font-semibold text-zinc-400 line-through decoration-[#DB021D] decoration-2 ml-1`}
-              >
-                {fmtPrice(compareHT)} €
-              </span>
-              {showSavings && (
-                <span className="ml-2 text-[11px] font-semibold text-[#DB021D] bg-red-50 px-2 py-0.5 rounded">
-                  Économisez {fmtPrice(compareHT - htPrice)} €
-                </span>
-              )}
-            </>
-          )}
-        </div>
-        <span className={`${classes.secondary} font-semibold text-zinc-500`}>
-          ({fmtPrice(ttcPrice)} € TTC)
-        </span>
-      </div>
-    );
-  }
+  const mainPrice = isPro ? htPrice : ttcPrice;
+  const mainLabel = isPro ? 'HT' : 'TTC';
+  const compareMain = isPro ? compareHT : compareTTC;
 
   return (
-    <div className="flex flex-col gap-0.5">
-      <div className="flex flex-wrap items-baseline gap-2">
-        <span
-          className={`${classes.main} text-[#1A1A1A]`}
-
-        >
-          {fmtPrice(ttcPrice)} €
-        </span>
-        {showLabel && (
-          <span
-            className={`${classes.secondary} font-bold text-zinc-400 uppercase`}
-          >
-            TTC
-          </span>
-        )}
-        {hasDiscount && compareTTC && (
-          <>
-            <span
-              className={`${classes.strikethrough} font-semibold text-zinc-400 line-through decoration-[#DB021D] decoration-2 ml-1`}
-            >
-              {fmtPrice(compareTTC)} €
-            </span>
-            {showSavings && (
-              <span className="ml-2 text-[12px] font-bold text-white bg-[#DB021D] px-2 py-0.5 rounded-full">
-                Économisez {fmtPrice(compareTTC - ttcPrice)} €
-              </span>
-            )}
-          </>
-        )}
-      </div>
-      <span className={`${classes.secondary} font-semibold text-zinc-500`}>
-        ({fmtPrice(htPrice)} € HT)
+    <div className="flex flex-wrap items-baseline gap-2">
+      <span className={`${classes.main} text-[#1A1A1A]`}>
+        {fmtPrice(mainPrice)} €
       </span>
+      {showLabel && (
+        <span className={`${classes.secondary} font-bold text-zinc-400 uppercase`}>
+          {mainLabel}
+        </span>
+      )}
+      {hasDiscount && compareMain && (
+        <>
+          <span className={`${classes.strikethrough} font-semibold text-zinc-400 line-through decoration-[#DB021D] decoration-2 ml-1`}>
+            {fmtPrice(compareMain)} €
+          </span>
+          {showSavings && (
+            <span className="ml-2 text-[12px] font-bold text-white bg-[#DB021D] px-2 py-0.5 rounded-full">
+              Économisez {fmtPrice(compareMain - mainPrice)} €
+            </span>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -169,39 +123,21 @@ export function PriceDisplayCompact({
 
   const hasDiscount = compareHT && compareHT > htPrice;
 
-  if (isPro) {
-    return (
-      <div className="space-y-0.5">
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-sm font-bold text-[#1A1A1A]">
-            {fmtPrice(htPrice)} €
-          </span>
-          <span className="text-[10px] text-zinc-500">HT</span>
-          {hasDiscount && compareHT && (
-            <span className="text-xs text-zinc-400 line-through">
-              {fmtPrice(compareHT)} €
-            </span>
-          )}
-        </div>
-        <p className="text-[10px] text-zinc-400">{fmtPrice(ttcPrice)} € TTC</p>
-      </div>
-    );
-  }
+  const mainPrice = isPro ? htPrice : ttcPrice;
+  const mainLabel = isPro ? 'HT' : 'TTC';
+  const compareMain = isPro ? compareHT : compareTTC;
 
   return (
-    <div className="space-y-0.5">
-      <div className="flex items-baseline gap-1.5">
-        <span className="text-sm font-black text-[#DB021D]">
-          {fmtPrice(ttcPrice)} €
+    <div className="flex items-baseline gap-1.5">
+      <span className={`text-sm font-black ${isPro ? 'text-[#1A1A1A]' : 'text-[#DB021D]'}`}>
+        {fmtPrice(mainPrice)} €
+      </span>
+      <span className="text-[10px] text-zinc-500">{mainLabel}</span>
+      {hasDiscount && compareMain && (
+        <span className="text-xs text-zinc-400 line-through">
+          {fmtPrice(compareMain)} €
         </span>
-        <span className="text-[10px] text-zinc-500">TTC</span>
-        {hasDiscount && compareTTC && (
-          <span className="text-xs text-zinc-400 line-through">
-            {fmtPrice(compareTTC)} €
-          </span>
-        )}
-      </div>
-      <p className="text-[10px] text-zinc-400">{fmtPrice(htPrice)} € HT</p>
+      )}
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { ArrowUp } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface BackToTopProps {
   visible: boolean;
@@ -9,21 +8,15 @@ interface BackToTopProps {
 }
 
 export default function BackToTop({ visible, onClick }: BackToTopProps) {
+  if (!visible) return null;
+
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          onClick={onClick}
-          className="fixed bottom-24 right-6 z-40 w-11 h-11 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-lg hover:bg-[#F5F5F5] transition-colors cursor-pointer"
-          aria-label="Retour en haut"
-        >
-          <ArrowUp className="w-5 h-5 text-[#1A1A1A]" strokeWidth={2} />
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <button
+      onClick={onClick}
+      className="fixed bottom-24 right-6 z-40 w-11 h-11 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md hover:bg-[#F5F5F5] transition-colors cursor-pointer"
+      aria-label="Retour en haut"
+    >
+      <ArrowUp className="w-5 h-5 text-[#1A1A1A]" strokeWidth={2} />
+    </button>
   );
 }

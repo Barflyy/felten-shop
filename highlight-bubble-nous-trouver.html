@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>Highlight Cover — Nous Trouver</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #DB021D;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .frame {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    background: #DB021D;
+  }
+
+  /* Background grain */
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+    background-size: 256px;
+    opacity: 0.25;
+    mix-blend-mode: overlay;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Radial vignette */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(100, 0, 10, 0.55) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Diagonal lines */
+  .lines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.07;
+  }
+  .lines::before {
+    content: '';
+    position: absolute;
+    inset: -100%;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 28px,
+      rgba(255,255,255,0.6) 28px,
+      rgba(255,255,255,0.6) 29px
+    );
+  }
+
+  /* Inner glow */
+  .glow {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255,80,80,0.35) 0%, transparent 70%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Content */
+  .content {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  /* PIN ICON */
+  .pin-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  /* Pulsing rings */
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    animation: pulse 2.5s ease-out infinite;
+  }
+  .ring-1 { width: 230px; height: 230px; animation-delay: 0s; }
+  .ring-2 { width: 280px; height: 280px; animation-delay: 0.6s; }
+  @keyframes pulse {
+    0%   { transform: scale(0.85); opacity: 0.6; }
+    100% { transform: scale(1.15); opacity: 0; }
+  }
+
+  /* White circle bg for pin */
+  .pin-bg {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pin-bg svg {
+    width: 90px;
+    height: 90px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+
+  /* TITLE */
+  .title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 100px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  /* RED UNDERLINE */
+  .underline {
+    width: 80px;
+    height: 5px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 3px;
+    margin-top: 20px;
+  }
+
+  /* SUBTITLE */
+  .subtitle {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 600;
+    font-size: 34px;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin-top: 16px;
+  }
+
+  /* Corner accents */
+  .corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 10;
+  }
+  .corner::before, .corner::after {
+    content: '';
+    position: absolute;
+    background: rgba(255,255,255,0.25);
+  }
+  .corner::before { width: 100%; height: 3px; top: 0; left: 0; }
+  .corner::after  { width: 3px; height: 100%; top: 0; left: 0; }
+  .c-tl { top: 40px; left: 40px; }
+  .c-tr { top: 40px; right: 40px; transform: scaleX(-1); }
+  .c-bl { bottom: 40px; left: 40px; transform: scaleY(-1); }
+  .c-br { bottom: 40px; right: 40px; transform: scale(-1); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="grain"></div>
+  <div class="lines"></div>
+  <div class="vignette"></div>
+  <div class="glow"></div>
+
+  <div class="corner c-tl"></div>
+  <div class="corner c-tr"></div>
+  <div class="corner c-bl"></div>
+  <div class="corner c-br"></div>
+
+  <div class="content">
+    <div class="pin-wrap">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="pin-bg">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="title">NOUS<br>TROUVER</div>
+    <div class="underline"></div>
+    <div class="subtitle">FELTEN SHOP</div>
+  </div>
+</div>
+</body>
+</html>

@@ -7,6 +7,7 @@ import { Search, ShoppingCart, Menu, User, ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { mainNavigation } from '@/lib/navigation';
 import { normalizeUrl } from '@/lib/shopify/menu';
+import { useVAT } from '@/context/vat-context';
 
 const NAV_LINKS = [
   { label: 'Outils', href: '/collections/outils-electroportatifs' },
@@ -33,6 +34,8 @@ export default function HomepageHeader({
   onOpenCart,
 }: HomepageHeaderProps) {
   const pathname = usePathname();
+  const { vatInfo, toggleDisplayMode } = useVAT();
+  const isPro = vatInfo.displayMode === 'HT';
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [activeCatId, setActiveCatId] = useState(mainNavigation[0]?.id || '');
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -92,8 +95,15 @@ export default function HomepageHeader({
               </span>
             </Link>
 
-            {/* Right: search + cart */}
+            {/* Right: toggle + search + cart */}
             <div className="flex items-center gap-1 -mr-2">
+              <button
+                onClick={toggleDisplayMode}
+                className="h-7 px-2 rounded-md bg-[#F5F5F5] text-[10px] font-bold text-[#4B5563] transition-colors"
+                aria-label={isPro ? 'Afficher les prix TTC' : 'Afficher les prix HT'}
+              >
+                {isPro ? 'PRO' : 'PART.'}
+              </button>
               <button
                 onClick={onOpenSearch}
                 className="w-10 h-10 flex items-center justify-center text-[#1A1A1A]"
@@ -167,7 +177,19 @@ export default function HomepageHeader({
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <button
+                onClick={toggleDisplayMode}
+                className="inline-flex items-center h-8 p-0.5 bg-[#F5F5F5] rounded-md text-[11px] font-semibold transition-colors"
+                aria-label={isPro ? 'Afficher les prix TTC' : 'Afficher les prix HT'}
+              >
+                <span className={`px-2 py-1 rounded transition-all ${!isPro ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#9CA3AF]'}`}>
+                  Particulier
+                </span>
+                <span className={`px-2 py-1 rounded transition-all ${isPro ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#9CA3AF]'}`}>
+                  Pro
+                </span>
+              </button>
               <Link
                 href="/connexion"
                 className="flex items-center gap-2 px-3 h-10 text-[#1A1A1A] text-[13px] font-medium hover:text-[#DB021D] transition-colors rounded-lg"

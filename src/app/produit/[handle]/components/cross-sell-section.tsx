@@ -50,7 +50,7 @@ export function CrossSellSection({ products }: { products: Product[] }) {
         {products.slice(0, 5).map((product) => (
           <div
             key={product.id}
-            className="snap-start w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0"
+            className="snap-start w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0 flex"
           >
             <ProductCardMini product={product} />
           </div>

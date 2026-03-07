@@ -10,7 +10,12 @@ interface CustomerContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
+  register: (email: string, password: string, firstName: string, lastName: string, vatData?: {
+    vatNumber: string;
+    countryCode: string;
+    companyName: string;
+    valid: boolean;
+  }) => Promise<{ success: boolean; error?: string }>;
   refreshCustomer: () => Promise<void>;
 }
 
@@ -110,12 +115,17 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
+  const register = async (email: string, password: string, firstName: string, lastName: string, vatData?: {
+    vatNumber: string;
+    countryCode: string;
+    companyName: string;
+    valid: boolean;
+  }) => {
     try {
       const response = await fetch('/api/customer/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+        body: JSON.stringify({ email, password, firstName, lastName, vatData }),
       });
 
       const data = await response.json();

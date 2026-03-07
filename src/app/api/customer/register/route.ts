@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { shopifyFetch } from '@/lib/shopify/client';
 import { CUSTOMER_CREATE } from '@/lib/shopify/queries';
+import { setCustomerProPending, isAdminConfigured } from '@/lib/shopify/admin';
 
 interface CustomerCreateResponse {
   customerCreate: {
@@ -20,7 +21,7 @@ interface CustomerCreateResponse {
 
 export async function POST(request: Request) {
   try {
-    const { email, password, firstName, lastName } = await request.json();
+    const { email, password, firstName, lastName, vatData } = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -68,7 +69,25 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true, customer });
+    // If VAT data provided, save as pending — manual activation by admin
+    if (vatData?.vatNumber && vatData?.valid && isAdminConfigured()) {
+      try {
+        await setCustomerProPending(email, {
+          vatNumber: vatData.vatNumber,
+          countryCode: vatData.countryCode,
+          companyName: vatData.companyName || '',
+        });
+      } catch (err) {
+        console.error('Error setting pro pending status:', err);
+        // Don't fail registration if pro tagging fails
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      customer,
+      proPending: !!(vatData?.vatNumber && vatData?.valid),
+    });
   } catch (error) {
     console.error('Register error:', error);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

@@ -1,8 +1,21 @@
 import type { Product } from '@/lib/shopify/types';
 import type { TabKey } from '../data/types';
 
+function isPerceuseVisseuse(p: Product): boolean {
+  const text = [p.title, p.productType, ...(p.tags || [])]
+    .filter(Boolean).join(' ').toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return ['perceuse', 'visseuse', 'perforateur'].some(t => text.includes(t));
+}
+
 export function filterProducts(products: Product[], tab: TabKey): Product[] {
-  if (tab === 'tous') return products;
+  if (tab === 'tous') {
+    return [...products].sort((a, b) => {
+      const aMatch = isPerceuseVisseuse(a) ? 0 : 1;
+      const bMatch = isPerceuseVisseuse(b) ? 0 : 1;
+      return aMatch - bMatch;
+    });
+  }
 
   // Extended keywords to match more Milwaukee tools
   const keywords: Record<Exclude<TabKey, 'tous'>, string[]> = {

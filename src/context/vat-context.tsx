@@ -58,6 +58,7 @@ interface VATContextType {
     companyName?: string;
   }) => void;
   clearVAT: () => void;
+  toggleDisplayMode: () => void;
   // Price formatting helpers
   formatPrice: (htAmount: number) => string;
   formatPriceWithLabel: (htAmount: number) => { price: string; label: string };
@@ -79,6 +80,7 @@ const defaultVATInfo: VATInfo = {
 const VATContext = createContext<VATContextType | undefined>(undefined);
 
 const VAT_STORAGE_KEY = 'shopfelten_vat_info';
+const DISPLAY_MODE_KEY = 'shopfelten_display_mode';
 
 export function VATProvider({ children }: { children: ReactNode }) {
   const [vatInfo, setVatInfo] = useState<VATInfo>(defaultVATInfo);
@@ -91,9 +93,15 @@ export function VATProvider({ children }: { children: ReactNode }) {
         try {
           const parsed = JSON.parse(stored);
           setVatInfo(parsed);
+          return;
         } catch (e) {
           console.error('Error parsing stored VAT info:', e);
         }
+      }
+      // If no VAT info, check for display mode preference
+      const savedMode = localStorage.getItem(DISPLAY_MODE_KEY);
+      if (savedMode === 'HT' || savedMode === 'TTC') {
+        setVatInfo(prev => ({ ...prev, displayMode: savedMode }));
       }
     }
   }, []);
@@ -162,6 +170,16 @@ export function VATProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const toggleDisplayMode = () => {
+    setVatInfo(prev => {
+      const newMode = prev.displayMode === 'TTC' ? 'HT' : 'TTC';
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(DISPLAY_MODE_KEY, newMode);
+      }
+      return { ...prev, displayMode: newMode };
+    });
+  };
+
   const clearVAT = () => {
     setVatInfo(defaultVATInfo);
     if (typeof window !== 'undefined') {
@@ -227,6 +245,7 @@ export function VATProvider({ children }: { children: ReactNode }) {
         vatInfo,
         setVATFromValidation,
         clearVAT,
+        toggleDisplayMode,
         formatPrice,
         formatPriceWithLabel,
         getDisplayPrice,
