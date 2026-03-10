@@ -1,22 +1,29 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
 // VAT rates by country (standard rates)
 const VAT_RATES: Record<string, number> = {
+  LU: 17,
   FR: 20,
-  DE: 19,
   BE: 21,
+  DE: 19,
+  NL: 21,
+  AT: 20,
   IT: 22,
   ES: 21,
-  NL: 21,
-  LU: 17,
-  AT: 20,
   PT: 23,
   IE: 23,
   PL: 23,
-  // Add more as needed
 };
+
+// Countries available for shipping (shown in selector)
+export const SHIPPING_COUNTRIES = [
+  { code: 'LU', label: 'Luxembourg', flag: '🇱🇺' },
+  { code: 'FR', label: 'France', flag: '🇫🇷' },
+  { code: 'BE', label: 'Belgique', flag: '🇧🇪' },
+  { code: 'DE', label: 'Allemagne', flag: '🇩🇪' },
+] as const;
 
 // EU countries eligible for reverse charge
 const EU_COUNTRIES = [
@@ -25,14 +32,14 @@ const EU_COUNTRIES = [
   'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'
 ];
 
-// Seller's country (your business location - Belgique)
-const SELLER_COUNTRY = 'BE';
-const SELLER_VAT_RATE = VAT_RATES[SELLER_COUNTRY] || 21;
+// Seller's country (Felten — Luxembourg)
+const SELLER_COUNTRY = 'LU';
+const SELLER_VAT_RATE = VAT_RATES[SELLER_COUNTRY] || 17;
 
 export type CustomerVATStatus =
-  | 'particulier'      // No VAT number - pays full VAT (21% BE)
-  | 'pro_local'        // Belgian professional - sees HT, pays TTC (21% BE)
-  | 'pro_eu'           // EU professional (non-BE) - sees HT, pays HT (reverse charge)
+  | 'particulier'      // No VAT number - pays destination country VAT (OSS)
+  | 'pro_local'        // Luxembourg professional - sees HT, pays TTC (17% LU)
+  | 'pro_eu'           // EU professional (non-LU) - sees HT, pays HT (reverse charge)
   | 'pro_non_eu';      // Non-EU professional - export, no VAT
 
 export interface VATInfo {
@@ -41,16 +48,16 @@ export interface VATInfo {
   countryCode: string | null;
   companyName: string | null;
   isValid: boolean;
-  // Display settings
   displayMode: 'HT' | 'TTC';
-  // What VAT rate applies at checkout
   applicableVATRate: number;
-  // Does customer benefit from reverse charge?
   reverseCharge: boolean;
+  // Delivery country for particuliers (OSS regime)
+  customerCountry: string;
 }
 
 interface VATContextType {
   vatInfo: VATInfo;
+  setCustomerCountry: (code: string) => void;
   setVATFromValidation: (data: {
     valid: boolean;
     vatNumber: string;
@@ -59,11 +66,14 @@ interface VATContextType {
   }) => void;
   clearVAT: () => void;
   toggleDisplayMode: () => void;
-  // Price formatting helpers
   formatPrice: (htAmount: number) => string;
   formatPriceWithLabel: (htAmount: number) => { price: string; label: string };
   getDisplayPrice: (htAmount: number) => number;
   getCheckoutPrice: (htAmount: number) => number;
+}
+
+function getVATRateForCountry(code: string): number {
+  return VAT_RATES[code] ?? SELLER_VAT_RATE;
 }
 
 const defaultVATInfo: VATInfo = {
@@ -75,57 +85,99 @@ const defaultVATInfo: VATInfo = {
   displayMode: 'TTC',
   applicableVATRate: SELLER_VAT_RATE,
   reverseCharge: false,
+  customerCountry: 'LU',
 };
 
 const VATContext = createContext<VATContextType | undefined>(undefined);
 
 const VAT_STORAGE_KEY = 'shopfelten_vat_info';
 const DISPLAY_MODE_KEY = 'shopfelten_display_mode';
+const COUNTRY_KEY = 'shopfelten_country';
 
 export function VATProvider({ children }: { children: ReactNode }) {
   const [vatInfo, setVatInfo] = useState<VATInfo>(defaultVATInfo);
 
   // Load from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(VAT_STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setVatInfo(parsed);
-          return;
-        } catch (e) {
-          console.error('Error parsing stored VAT info:', e);
-        }
-      }
-      // If no VAT info, check for display mode preference
-      const savedMode = localStorage.getItem(DISPLAY_MODE_KEY);
-      if (savedMode === 'HT' || savedMode === 'TTC') {
-        setVatInfo(prev => ({ ...prev, displayMode: savedMode }));
+    if (typeof window === 'undefined') return;
+
+    const stored = localStorage.getItem(VAT_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        // Ensure customerCountry exists (migration from old format)
+        if (!parsed.customerCountry) parsed.customerCountry = 'LU';
+        setVatInfo(parsed);
+        return;
+      } catch {
+        // ignore
       }
     }
+
+    // No stored VAT info — check individual preferences
+    const savedMode = localStorage.getItem(DISPLAY_MODE_KEY);
+    const savedCountry = localStorage.getItem(COUNTRY_KEY);
+
+    // Priority: 1) manual choice (localStorage), 2) geo cookie from middleware, 3) fallback LU
+    let country = 'LU';
+    if (savedCountry && VAT_RATES[savedCountry]) {
+      country = savedCountry;
+    } else {
+      const geoCookie = document.cookie.split('; ').find(c => c.startsWith('geo_country='));
+      const geoCountry = geoCookie?.split('=')[1];
+      if (geoCountry && VAT_RATES[geoCountry]) {
+        country = geoCountry;
+      }
+    }
+
+    setVatInfo(prev => ({
+      ...prev,
+      displayMode: savedMode === 'HT' || savedMode === 'TTC' ? savedMode : prev.displayMode,
+      customerCountry: country,
+      applicableVATRate: getVATRateForCountry(country),
+    }));
   }, []);
 
-  // Save to localStorage when vatInfo changes
+  // Persist pro VAT info
   useEffect(() => {
     if (typeof window !== 'undefined' && vatInfo.vatNumber) {
       localStorage.setItem(VAT_STORAGE_KEY, JSON.stringify(vatInfo));
     }
   }, [vatInfo]);
 
-  const setVATFromValidation = (data: {
+  // Change delivery country (for particuliers — OSS)
+  const setCustomerCountry = useCallback((code: string) => {
+    const upper = code.toUpperCase();
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(COUNTRY_KEY, upper);
+    }
+    setVatInfo(prev => {
+      // Only affects particuliers — pros have their own rate logic
+      if (prev.status !== 'particulier') {
+        return { ...prev, customerCountry: upper };
+      }
+      return {
+        ...prev,
+        customerCountry: upper,
+        applicableVATRate: getVATRateForCountry(upper),
+      };
+    });
+  }, []);
+
+  const setVATFromValidation = useCallback((data: {
     valid: boolean;
     vatNumber: string;
     countryCode: string;
     companyName?: string;
   }) => {
     if (!data.valid) {
-      // Invalid VAT - treat as particulier
-      setVatInfo({
+      setVatInfo(prev => ({
         ...defaultVATInfo,
         vatNumber: data.vatNumber,
         isValid: false,
-      });
+        customerCountry: prev.customerCountry,
+        applicableVATRate: getVATRateForCountry(prev.customerCountry),
+      }));
       return;
     }
 
@@ -139,26 +191,26 @@ export function VATProvider({ children }: { children: ReactNode }) {
     let reverseCharge: boolean;
 
     if (isSameCountry) {
-      // Belgian professional - sees HT, pays TTC (BE VAT 21%)
+      // Luxembourg professional — 17% LU
       status = 'pro_local';
       displayMode = 'HT';
       applicableVATRate = SELLER_VAT_RATE;
       reverseCharge = false;
     } else if (isEU) {
-      // EU professional (non-FR) - reverse charge applies
+      // EU professional (non-LU) — reverse charge
       status = 'pro_eu';
       displayMode = 'HT';
-      applicableVATRate = 0; // No VAT - reverse charge
+      applicableVATRate = 0;
       reverseCharge = true;
     } else {
-      // Non-EU - export, no VAT
+      // Non-EU — export, no VAT
       status = 'pro_non_eu';
       displayMode = 'HT';
       applicableVATRate = 0;
       reverseCharge = false;
     }
 
-    setVatInfo({
+    setVatInfo(prev => ({
       status,
       vatNumber: data.vatNumber,
       countryCode,
@@ -167,10 +219,11 @@ export function VATProvider({ children }: { children: ReactNode }) {
       displayMode,
       applicableVATRate,
       reverseCharge,
-    });
-  };
+      customerCountry: prev.customerCountry,
+    }));
+  }, []);
 
-  const toggleDisplayMode = () => {
+  const toggleDisplayMode = useCallback(() => {
     setVatInfo(prev => {
       const newMode = prev.displayMode === 'TTC' ? 'HT' : 'TTC';
       if (typeof window !== 'undefined') {
@@ -178,43 +231,37 @@ export function VATProvider({ children }: { children: ReactNode }) {
       }
       return { ...prev, displayMode: newMode };
     });
-  };
+  }, []);
 
-  const clearVAT = () => {
-    setVatInfo(defaultVATInfo);
+  const clearVAT = useCallback(() => {
+    setVatInfo(prev => ({
+      ...defaultVATInfo,
+      customerCountry: prev.customerCountry,
+      applicableVATRate: getVATRateForCountry(prev.customerCountry),
+    }));
     if (typeof window !== 'undefined') {
       localStorage.removeItem(VAT_STORAGE_KEY);
     }
-  };
+  }, []);
 
-  // Calculate TTC from HT
-  const calculateTTC = (htAmount: number, vatRate: number = SELLER_VAT_RATE): number => {
+  const calculateTTC = (htAmount: number, vatRate: number = vatInfo.applicableVATRate): number => {
     return htAmount * (1 + vatRate / 100);
   };
 
-  // Get the price to display (based on displayMode)
   const getDisplayPrice = (htAmount: number): number => {
-    if (vatInfo.displayMode === 'HT') {
-      return htAmount;
-    }
+    if (vatInfo.displayMode === 'HT') return htAmount;
     return calculateTTC(htAmount);
   };
 
-  // Get the price at checkout (based on applicable VAT)
   const getCheckoutPrice = (htAmount: number): number => {
-    if (vatInfo.applicableVATRate === 0) {
-      return htAmount; // No VAT
-    }
+    if (vatInfo.applicableVATRate === 0) return htAmount;
     return calculateTTC(htAmount, vatInfo.applicableVATRate);
   };
 
-  // Format price for display
   const formatPrice = (htAmount: number): string => {
-    const displayPrice = getDisplayPrice(htAmount);
-    return displayPrice.toFixed(2).replace('.', ',');
+    return getDisplayPrice(htAmount).toFixed(2).replace('.', ',');
   };
 
-  // Format price with appropriate label
   const formatPriceWithLabel = (htAmount: number): { price: string; label: string } => {
     const displayPrice = getDisplayPrice(htAmount);
     const formattedPrice = displayPrice.toFixed(2).replace('.', ',');
@@ -222,13 +269,13 @@ export function VATProvider({ children }: { children: ReactNode }) {
     let label: string;
     switch (vatInfo.status) {
       case 'pro_local':
-        label = 'HT'; // Display HT, BE VAT (21%) will be added at checkout
+        label = 'HT';
         break;
       case 'pro_eu':
-        label = 'HT (Exonéré)'; // No VAT - reverse charge / autoliquidation
+        label = 'HT (Exonéré)';
         break;
       case 'pro_non_eu':
-        label = 'HT (Export)'; // No VAT - export
+        label = 'HT (Export)';
         break;
       case 'particulier':
       default:
@@ -243,6 +290,7 @@ export function VATProvider({ children }: { children: ReactNode }) {
     <VATContext.Provider
       value={{
         vatInfo,
+        setCustomerCountry,
         setVATFromValidation,
         clearVAT,
         toggleDisplayMode,
@@ -265,7 +313,6 @@ export function useVAT() {
   return context;
 }
 
-// Helper hook for simple price display
 export function useFormattedPrice(htAmount: number) {
   const { formatPriceWithLabel } = useVAT();
   return formatPriceWithLabel(htAmount);

@@ -1,13 +1,13 @@
 'use client';
 
-import { Truck, ShieldCheck, Award, Lock, Headphones } from 'lucide-react';
+import { Phone, MapPin, ShieldCheck, Package, Wrench } from 'lucide-react';
 
 const ITEMS = [
-  { icon: Truck, text: 'Expédition 24h' },
-  { icon: Headphones, text: 'SAV Belgique' },
-  { icon: Award, text: 'Garantie 3 ans' },
-  { icon: ShieldCheck, text: 'Revendeur officiel' },
-  { icon: Lock, text: 'Paiement sécurisé' },
+  { icon: Phone, text: 'Florian vous rappelle sous 2h' },
+  { icon: MapPin, text: 'SAV physique au Luxembourg' },
+  { icon: ShieldCheck, text: 'Revendeur agree Milwaukee' },
+  { icon: Package, text: 'Jamais de piece grise' },
+  { icon: Wrench, text: 'Panne ? On gere en 48h' },
 ];
 
 export default function TrustMarquee() {
@@ -19,7 +19,7 @@ export default function TrustMarquee() {
           key={`marquee-item-${i}`}
           className="inline-flex items-center gap-1.5 px-4 lg:px-6 text-[#1A1A1A] text-[11px] lg:text-[12px] font-medium whitespace-nowrap"
         >
-          <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 text-[#9CA3AF]" strokeWidth={2} />
+          <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 text-[#DB021D]" strokeWidth={2} />
           {item.text}
         </span>
       );

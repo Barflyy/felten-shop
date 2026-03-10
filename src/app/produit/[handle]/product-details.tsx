@@ -6,6 +6,7 @@ import {
   ShoppingCart,
   AlertTriangle,
   Phone,
+  ShieldCheck,
 } from "lucide-react";
 import { Product } from "@/lib/shopify/types";
 import { useCart } from "@/context/cart-context";
@@ -21,12 +22,6 @@ import { parseDescriptionHtml, parseProductTitle } from "./lib/parse-product";
 import { Zap, Battery, Crosshair } from "lucide-react";
 
 function getShippingMessage(): string {
-  const now = new Date();
-  const hour = now.getHours();
-  const day = now.getDay(); // 0=Sun, 6=Sat
-  if (day >= 1 && day <= 5 && hour < 14) {
-    return "Commandé avant 14h → expédié aujourd'hui";
-  }
   return "Expédié sous 24-48h ouvrées";
 }
 
@@ -236,6 +231,10 @@ export function ProductDetails({
     (m) => m?.namespace === "custom" && m?.key === "contenu_de_boite",
   )?.value;
 
+  const contenuDeBoiteImages = selectedVariant?.metafields?.find(
+    (m) => m?.namespace === "custom" && m?.key === "contenu_de_boite_images",
+  )?.value;
+
   const html = product.descriptionHtml || "";
   const { intro, features, specsRows } = useMemo(
     () => parseDescriptionHtml(html),
@@ -302,7 +301,7 @@ export function ProductDetails({
           {/* Breadcrumb (hidden, kept for SEO structured data) */}
 
           {/* ── Two-column layout ── */}
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 items-start">
+          <div className="flex flex-col lg:flex-row gap-3 lg:gap-12 items-start">
             {/* LEFT: Sticky Gallery */}
             <div className="w-full lg:w-[55%] lg:sticky lg:top-20 lg:self-start">
               <ImageGallery
@@ -316,7 +315,7 @@ export function ProductDetails({
 
             {/* RIGHT: Product Info */}
             <div className="w-full lg:w-[45%] pb-8">
-              <div className="space-y-4 lg:space-y-5">
+              <div className="space-y-3 lg:space-y-5">
                 {/* Product Type + SKU */}
                 <div className="flex items-center gap-3">
                   {product.productType && (
@@ -341,35 +340,49 @@ export function ProductDetails({
                       {modelRef}
                     </p>
                   )}
+                  {/* Google rating */}
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <div className="flex gap-0.5">
+                      {[1,2,3,4,5].map((i) => (
+                        <svg key={i} viewBox="0 0 12 12" className="w-3.5 h-3.5" fill="#FBBF24"><polygon points="6,1 7.5,4.5 11,4.8 8.5,7 9.3,10.5 6,8.5 2.7,10.5 3.5,7 1,4.8 4.5,4.5"/></svg>
+                      ))}
+                    </div>
+                    <span className="text-[11px] font-semibold text-[#1A1A1A]">5.0</span>
+                    <span className="text-[11px] text-[#9CA3AF]">/ 5 — Avis Google Magasin &amp; SAV</span>
+                  </div>
                 </div>
 
-                {/* Price */}
-                <div>
-                  <PriceDisplay
-                    priceHT={price?.amount || "0"}
-                    compareAtPriceHT={compareAtPrice?.amount}
-                    size="lg"
-                    showSavings={true}
-                  />
-                </div>
-
-                {/* Availability */}
-                <div className="flex items-center gap-2">
-                  {isAvailable ? (
-                    <>
+                {/* Price + Availability + Revendeur badge */}
+                <div className="space-y-1.5 lg:space-y-2.5">
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <PriceDisplay
+                      priceHT={price?.amount || "0"}
+                      compareAtPriceHT={compareAtPrice?.amount}
+                      size="lg"
+                      showSavings={true}
+                    />
+                    {isAvailable ? (
                       <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-emerald-600">
                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                         En stock
                       </span>
-                      <span className="text-[12px] text-[#6B7280]">
-                        · {getShippingMessage()}
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-red-500">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        Rupture de stock
                       </span>
-                    </>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-red-500">
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      Rupture de stock
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#DB021D]" strokeWidth={2} />
+                    <span className="text-[11px] font-semibold text-[#6B7280]">
+                      Revendeur agree Milwaukee — Garantie 3 ans
                     </span>
+                  </div>
+                  {isAvailable && (
+                    <p className="text-[11px] text-[#9CA3AF]">
+                      {getShippingMessage()}
+                    </p>
                   )}
                 </div>
 
@@ -421,7 +434,7 @@ export function ProductDetails({
                                 ? "Configuration"
                                 : option.name}
                             </label>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="grid grid-cols-2 gap-2 lg:flex lg:flex-wrap">
                               {filteredValues.map((value) => {
                                 const isSelected =
                                   selectedOptions[option.name] === value;
@@ -434,7 +447,7 @@ export function ProductDetails({
                                         [option.name]: value,
                                       }))
                                     }
-                                    className={`px-3.5 py-2.5 text-[13px] font-medium rounded-lg border transition-all ${isSelected
+                                    className={`px-3 py-2.5 text-[12px] font-medium rounded-lg border transition-all text-left truncate ${isSelected
                                       ? "bg-[#1A1A1A] text-white border-[#1A1A1A]"
                                       : "bg-white text-[#4B5563] border-gray-200 hover:border-[#1A1A1A]"
                                       }`}
@@ -449,6 +462,21 @@ export function ProductDetails({
                       })}
                     </div>
                   )}
+
+                {/* Trust section — conversion zone (desktop: before CTA, mobile: after) */}
+                <div className="hidden lg:block rounded-lg border border-gray-100 bg-[#FAFAFA] p-3.5 space-y-2">
+                  {[
+                    "Produit 100% officiel Milwaukee",
+                    "Garantie 3 ans activée à l'achat",
+                    "Un problème ? Florian vous répond directement",
+                    "SAV physique au Luxembourg — pas un call center",
+                  ].map((line) => (
+                    <div key={line} className="flex items-start gap-2.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" strokeWidth={2.5} />
+                      <span className="text-[12px] text-[#4B5563] leading-snug">{line}</span>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Quantity + CTA */}
                 <div ref={ctaRef} className="flex items-stretch gap-3 pt-1">
@@ -483,11 +511,47 @@ export function ProductDetails({
                   </button>
                 </div>
 
-                {/* Reassurance */}
-                <div className="flex items-center gap-4 lg:gap-5 flex-wrap pt-1 text-[11px] lg:text-[12px] text-[#9CA3AF]">
-                  <span>Livraison 24h</span>
-                  <span>Garantie 3 ans</span>
-                  <span>SAV Expert</span>
+                {/* Payment methods */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] text-[#9CA3AF] mr-1">Paiement sécurisé :</span>
+                  {[
+                    { label: 'Visa', svg: <svg viewBox="0 0 38 24" className="h-4 w-auto"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E5E7EB" strokeWidth="1"/><text x="5" y="17" fontFamily="Arial" fontWeight="bold" fontSize="11" fill="#1A1F71" letterSpacing="-0.5">VISA</text></svg> },
+                    { label: 'Mastercard', svg: <svg viewBox="0 0 38 24" className="h-4 w-auto"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E5E7EB" strokeWidth="1"/><circle cx="15" cy="12" r="7" fill="#EB001B" opacity=".9"/><circle cx="23" cy="12" r="7" fill="#F79E1B" opacity=".9"/><path d="M19 6.8a7 7 0 0 1 0 10.4A7 7 0 0 1 19 6.8z" fill="#FF5F00"/></svg> },
+                    { label: 'PayPal', svg: <svg viewBox="0 0 38 24" className="h-4 w-auto"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E5E7EB" strokeWidth="1"/><text x="4" y="16" fontFamily="Arial" fontWeight="bold" fontSize="9" fill="#003087">Pay</text><text x="16" y="16" fontFamily="Arial" fontWeight="bold" fontSize="9" fill="#009CDE">Pal</text></svg> },
+                    { label: 'Apple Pay', svg: <svg viewBox="0 0 38 24" className="h-4 w-auto"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E5E7EB" strokeWidth="1"/><text x="4" y="16" fontFamily="Arial" fontWeight="bold" fontSize="8.5" fill="#1A1A1A"> Pay</text><path d="M7 7.5c.4-.5.7-1.1.6-1.7-.6 0-1.3.4-1.7.9-.4.4-.7 1-.6 1.6.6 0 1.2-.3 1.7-.8z" fill="#1A1A1A" transform="translate(1,1)"/></svg> },
+                    { label: 'Bancontact', svg: <svg viewBox="0 0 38 24" className="h-4 w-auto"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E5E7EB" strokeWidth="1"/><rect x="1" y="1" width="36" height="10" rx="2" fill="#005498"/><rect x="1" y="13" width="36" height="10" rx="2" fill="#FFCC00"/><text x="19" y="9.5" fontFamily="Arial" fontWeight="bold" fontSize="6" fill="#fff" textAnchor="middle">BANCONTACT</text></svg> },
+                    { label: 'Virement', svg: <svg viewBox="0 0 38 24" className="h-4 w-auto"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E5E7EB" strokeWidth="1"/><text x="19" y="10" fontFamily="Arial" fontSize="6" fill="#6B7280" textAnchor="middle">Virement</text><text x="19" y="18" fontFamily="Arial" fontSize="6" fill="#6B7280" textAnchor="middle">bancaire</text></svg> },
+                  ].map(({ label, svg }) => (
+                    <span key={label} title={label} className="opacity-70 hover:opacity-100 transition-opacity">
+                      {svg}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Google reputation badge */}
+                <div className="flex items-center gap-2 py-1.5 px-3 bg-[#FAFAFA] rounded-lg border border-gray-100 w-fit">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 flex-shrink-0" fill="none">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  <span className="text-[11px] text-[#4B5563]">Excellente réputation — <span className="font-semibold">Note de 5/5</span> sur Google Avis</span>
+                </div>
+
+                {/* Trust section — mobile only (after CTA for better above-fold) */}
+                <div className="lg:hidden rounded-lg border border-gray-100 bg-[#FAFAFA] p-3.5 space-y-2">
+                  {[
+                    "Produit 100% officiel Milwaukee",
+                    "Garantie 3 ans activée à l'achat",
+                    "Un problème ? Florian vous répond directement",
+                    "SAV physique au Luxembourg — pas un call center",
+                  ].map((line) => (
+                    <div key={line} className="flex items-start gap-2.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" strokeWidth={2.5} />
+                      <span className="text-[12px] text-[#4B5563] leading-snug">{line}</span>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Use cases + Battery compatibility */}
@@ -527,7 +591,7 @@ export function ProductDetails({
                 >
                   <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center text-[#9CA3AF]">
                     <img
-                      src="/images/florian-avatar.jpg"
+                      src="/images/florian-avatar.png"
                       alt="Florian"
                       className="w-full h-full object-cover"
                       onError={(e) => {
@@ -554,25 +618,68 @@ export function ProductDetails({
 
                 {/* Accordions */}
                 <div>
-                  {contenuDeBoite && (
-                    <Accordion title="Contenu de la boîte">
-                      <div className="rounded-lg border border-gray-100 overflow-hidden">
-                        {contenuDeBoite.split("\n").filter(Boolean).map((line, i, arr) => (
-                          <div
-                            key={i}
-                            className={`flex items-center gap-3 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
-                          >
-                            <Check className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
-                            <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </Accordion>
-                  )}
-
-                  <Accordion title="Description">
+                  <Accordion title="Description" defaultOpen>
                     {renderDescriptionContent()}
                   </Accordion>
+
+                  {contenuDeBoite && (() => {
+                    const lines = contenuDeBoite.split("\n").filter(Boolean);
+                    const rawImages = contenuDeBoiteImages && contenuDeBoiteImages !== "-"
+                      ? contenuDeBoiteImages.split("\n").filter(Boolean).map((f: string) => f.trim()).filter((f: string) => f && f !== "-")
+                      : [];
+                    const CDN_BASE = "https://cdn.shopify.com/s/files/1/0750/5746/3564/files/";
+                    const hasImages = rawImages.length > 0;
+
+                    return (
+                      <Accordion title="Contenu de la boîte">
+                        {hasImages ? (
+                          <div className="rounded-lg border border-gray-100 overflow-hidden">
+                            {lines.map((line, i, arr) => {
+                              const file = rawImages[i];
+                              const imageUrl = file ? `${CDN_BASE}${encodeURIComponent(file)}` : null;
+                              return (
+                                <div
+                                  key={i}
+                                  className={`flex items-center gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
+                                >
+                                  {imageUrl ? (
+                                    <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                                      <img
+                                        src={imageUrl}
+                                        alt={line.trim()}
+                                        className="max-h-12 max-w-12 object-contain"
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = 'none';
+                                          e.currentTarget.parentElement!.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#9CA3AF]"><path d="M20 6 9 17l-5-5"/></svg>';
+                                        }}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                                      <Check className="w-4 h-4 text-[#9CA3AF]" />
+                                    </div>
+                                  )}
+                                  <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="rounded-lg border border-gray-100 overflow-hidden">
+                            {lines.map((line, i, arr) => (
+                              <div
+                                key={i}
+                                className={`flex items-center gap-3 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
+                              >
+                                <Check className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                                <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </Accordion>
+                    );
+                  })()}
 
                   {features.length > 0 && (
                     <Accordion title="Caractéristiques">
@@ -641,6 +748,40 @@ export function ProductDetails({
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div className="bg-[#F9F9F9] border-t border-gray-100 py-8 lg:py-12">
+          <div className="max-w-[1280px] mx-auto px-4 lg:px-8">
+            <h2 className="text-[15px] lg:text-[18px] font-bold text-[#1A1A1A] mb-5 lg:mb-6">
+              Nos clients valident le Service Felten
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4">
+              {[
+                { name: 'Fabian Massard', text: 'Un stock de guerre et le service client qui va avec.' },
+                { name: 'Ben Coates', text: 'Le plus beau et gros revendeur Milwaukee, un réel plaisir.' },
+                { name: 'Edgar Probst', text: 'Choix énorme et service impeccable.' },
+              ].map(({ name, text }) => (
+                <div key={name} className="bg-white rounded-lg border border-gray-100 p-4 lg:p-5 flex flex-col gap-3">
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map((i) => (
+                      <svg key={i} viewBox="0 0 12 12" className="w-3 h-3" fill="#FBBF24"><polygon points="6,1 7.5,4.5 11,4.8 8.5,7 9.3,10.5 6,8.5 2.7,10.5 3.5,7 1,4.8 4.5,4.5"/></svg>
+                    ))}
+                  </div>
+                  <p className="text-[13px] lg:text-[14px] text-[#1A1A1A] leading-relaxed flex-grow">
+                    &ldquo;{text}&rdquo;
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] font-semibold text-[#4B5563]">{name}</span>
+                    <span className="text-[10px] text-[#6B7280] flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4]" />
+                      Google
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

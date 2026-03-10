@@ -2,9 +2,9 @@
 
 import { useVAT } from "@/context/vat-context";
 
-const BE_VAT_RATE = 21;
+const LU_VAT_RATE = 17;
 
-function calcTTC(ht: number, vatRate: number = BE_VAT_RATE): number {
+function calcTTC(ht: number, vatRate: number = LU_VAT_RATE): number {
   return ht * (1 + vatRate / 100);
 }
 
@@ -31,7 +31,7 @@ export function PriceDisplay({
   const isPro = vatInfo.displayMode === "HT";
 
   const htPrice = typeof priceHT === "string" ? parseFloat(priceHT) : priceHT;
-  const ttcPrice = calcTTC(htPrice, vatInfo.applicableVATRate || BE_VAT_RATE);
+  const ttcPrice = calcTTC(htPrice, vatInfo.applicableVATRate || LU_VAT_RATE);
 
   const compareHT = compareAtPriceHT
     ? typeof compareAtPriceHT === "string"
@@ -39,7 +39,7 @@ export function PriceDisplay({
       : compareAtPriceHT
     : null;
   const compareTTC = compareHT
-    ? calcTTC(compareHT, vatInfo.applicableVATRate || BE_VAT_RATE)
+    ? calcTTC(compareHT, vatInfo.applicableVATRate || LU_VAT_RATE)
     : null;
 
   const hasDiscount = compareHT && compareHT > htPrice;
@@ -74,27 +74,32 @@ export function PriceDisplay({
   const compareMain = isPro ? compareHT : compareTTC;
 
   return (
-    <div className="flex flex-wrap items-baseline gap-2">
-      <span className={`${classes.main} text-[#1A1A1A]`}>
-        {fmtPrice(mainPrice)} €
-      </span>
-      {showLabel && (
-        <span className={`${classes.secondary} font-bold text-zinc-400 uppercase`}>
-          {mainLabel}
-        </span>
-      )}
+    <div>
       {hasDiscount && compareMain && (
-        <>
-          <span className={`${classes.strikethrough} font-semibold text-zinc-400 line-through decoration-[#DB021D] decoration-2 ml-1`}>
+        <div className="flex items-center gap-2 mb-1">
+          <span className={`${classes.strikethrough} text-[#9CA3AF] line-through`}>
             {fmtPrice(compareMain)} €
           </span>
-          {showSavings && (
-            <span className="ml-2 text-[12px] font-bold text-white bg-[#DB021D] px-2 py-0.5 rounded-full">
-              Économisez {fmtPrice(compareMain - mainPrice)} €
-            </span>
-          )}
-        </>
+          <span className="text-[10px] font-medium text-[#9CA3AF] uppercase">
+            Prix public {mainLabel}
+          </span>
+        </div>
       )}
+      <div className="flex flex-wrap items-baseline gap-2">
+        <span className={`${classes.main} ${hasDiscount ? 'text-[#DB021D]' : 'text-[#1A1A1A]'}`}>
+          {fmtPrice(mainPrice)} €
+        </span>
+        {showLabel && (
+          <span className={`${classes.secondary} font-bold text-zinc-400 uppercase`}>
+            {mainLabel}
+          </span>
+        )}
+        {hasDiscount && compareMain && showSavings && (
+          <span className="text-[12px] font-bold text-[#DB021D] bg-[#DB021D]/10 px-2 py-0.5 rounded-md">
+            -{Math.round((1 - mainPrice / compareMain) * 100)}%
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -110,7 +115,7 @@ export function PriceDisplayCompact({
   const isPro = vatInfo.displayMode === "HT";
 
   const htPrice = typeof priceHT === "string" ? parseFloat(priceHT) : priceHT;
-  const ttcPrice = calcTTC(htPrice, vatInfo.applicableVATRate || BE_VAT_RATE);
+  const ttcPrice = calcTTC(htPrice, vatInfo.applicableVATRate || LU_VAT_RATE);
 
   const compareHT = compareAtPriceHT
     ? typeof compareAtPriceHT === "string"
@@ -118,7 +123,7 @@ export function PriceDisplayCompact({
       : compareAtPriceHT
     : null;
   const compareTTC = compareHT
-    ? calcTTC(compareHT, vatInfo.applicableVATRate || BE_VAT_RATE)
+    ? calcTTC(compareHT, vatInfo.applicableVATRate || LU_VAT_RATE)
     : null;
 
   const hasDiscount = compareHT && compareHT > htPrice;

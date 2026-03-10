@@ -23,24 +23,26 @@ export function ProductCardMini({ product }: { product: Product }) {
     return (
         <Link
             href={`/produit/${product.handle}`}
-            className="group flex flex-col h-full bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-300 transition-all"
+            className="group flex flex-col h-full bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all"
         >
-            <div className="relative bg-[#FAFAFA] flex items-center justify-center h-[180px]">
+            <div className="relative bg-[#F7F7F7] aspect-[4/3]">
                 {image?.url ? (
                     <Image
                         src={image.url}
                         alt={image.altText || product.title}
                         fill
-                        className="object-contain p-6"
-                        sizes="240px"
+                        className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                        sizes="(min-width: 1024px) 240px, 200px"
                     />
                 ) : (
-                    <span className="text-gray-200 text-sm">Image</span>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-gray-300 text-sm">Image</span>
+                    </div>
                 )}
             </div>
 
-            <div className="p-3 flex flex-col flex-1">
-                <h3 className="text-[12px] font-medium text-[#4B5563] line-clamp-2 leading-snug min-h-[2lh] mb-2 group-hover:text-[#1A1A1A] transition-colors">
+            <div className="p-3 flex flex-col flex-1 border-t border-gray-50">
+                <h3 className="text-[12px] font-medium text-[#4B5563] line-clamp-2 leading-snug min-h-[calc(2*1.375em)] mb-2 group-hover:text-[#1A1A1A] transition-colors">
                     {title}
                 </h3>
                 <div className="mt-auto">

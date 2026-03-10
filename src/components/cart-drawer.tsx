@@ -16,7 +16,6 @@ import { shopifyFetch } from '@/lib/shopify/client';
 import { PRODUCT_RECOMMENDATIONS_QUERY } from '@/lib/shopify/queries';
 
 const FREE_SHIPPING_THRESHOLD_HT = 150;
-const LU_VAT = 0.17;
 const EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
 
 interface RecommendedProduct {
@@ -38,6 +37,7 @@ function CartItem({
   onRemove,
   isLoading,
   displayHT,
+  vatRate,
   closeCart,
 }: {
   line: {
@@ -55,10 +55,11 @@ function CartItem({
   onRemove: (id: string) => void;
   isLoading: boolean;
   displayHT: boolean;
+  vatRate: number;
   closeCart: () => void;
 }) {
   const unitHT = parseFloat(line.merchandise.price.amount);
-  const unitDisplay = displayHT ? unitHT : unitHT * (1 + LU_VAT);
+  const unitDisplay = displayHT ? unitHT : unitHT * (1 + vatRate);
   const lineDisplay = unitDisplay * line.quantity;
 
   return (
@@ -160,17 +161,19 @@ function RecommendationCard({
   isLoading,
   closeCart,
   displayHT,
+  vatRate,
 }: {
   product: RecommendedProduct;
   onAddToCart: (variantId: string) => void;
   isLoading: boolean;
   closeCart: () => void;
   displayHT: boolean;
+  vatRate: number;
 }) {
   const variant = product.variants.edges[0]?.node;
   if (!variant?.availableForSale) return null;
   const ht = parseFloat(variant.price.amount);
-  const display = displayHT ? ht : ht * (1 + LU_VAT);
+  const display = displayHT ? ht : ht * (1 + vatRate);
 
   return (
     <div className="shrink-0 w-[110px] snap-start">
@@ -258,9 +261,13 @@ export function CartDrawer() {
   const totalHT = lines.reduce((sum, { node: line }) => {
     return sum + parseFloat(line.merchandise.price.amount) * line.quantity;
   }, 0);
-  const vatAmount = totalHT * LU_VAT;
+  const vatRate = vatInfo.applicableVATRate / 100;
+  const vatAmount = vatInfo.reverseCharge ? 0 : totalHT * vatRate;
   const totalTTC = totalHT + vatAmount;
-  const displayTotal = displayHT ? totalHT : totalTTC;
+  // Total affiché = HT seulement si autoliquidation ou TVA 0%, sinon TTC
+  const noVAT = vatInfo.reverseCharge || vatInfo.applicableVATRate === 0;
+  const displayTotal = noVAT ? totalHT : totalTTC;
+  const totalLabel = noVAT ? 'HT' : 'TTC';
 
   const shippingProgress = Math.min((totalHT / FREE_SHIPPING_THRESHOLD_HT) * 100, 100);
   const amountToFreeShipping = Math.max(FREE_SHIPPING_THRESHOLD_HT - totalHT, 0);
@@ -428,6 +435,7 @@ export function CartDrawer() {
                           onRemove={removeCartLine}
                           isLoading={isLoading}
                           displayHT={displayHT}
+                          vatRate={vatRate}
                           closeCart={closeCart}
                         />
                       ))}
@@ -452,6 +460,7 @@ export function CartDrawer() {
                             isLoading={isLoading}
                             closeCart={closeCart}
                             displayHT={displayHT}
+                            vatRate={vatRate}
                           />
                         ))}
                       </ScrollFadeContainer>
@@ -511,7 +520,7 @@ export function CartDrawer() {
                   {!vatInfo.reverseCharge && vatInfo.applicableVATRate > 0 && (
                     <div className="flex justify-between text-[13px]">
                       <span className="text-[#6B7280]">TVA ({vatInfo.applicableVATRate}%)</span>
-                      <span className="font-medium text-[#1A1A1A] tabular-nums">{(totalHT * vatInfo.applicableVATRate / 100).toFixed(2).replace('.', ',')} €</span>
+                      <span className="font-medium text-[#1A1A1A] tabular-nums">{vatAmount.toFixed(2).replace('.', ',')} €</span>
                     </div>
                   )}
                   {vatInfo.reverseCharge && (
@@ -523,7 +532,7 @@ export function CartDrawer() {
                   <div className="flex justify-between text-[13px]">
                     <span className="text-[#6B7280]">Livraison</span>
                     <span className={`font-medium ${shippingProgress >= 100 ? 'text-emerald-600' : 'text-[#6B7280]'}`}>
-                      {shippingProgress >= 100 ? 'Offerte' : 'Calculee au checkout'}
+                      {shippingProgress >= 100 ? 'Offerte' : 'Calculée au checkout'}
                     </span>
                   </div>
                 </div>
@@ -531,7 +540,7 @@ export function CartDrawer() {
                 {/* Total */}
                 <div className="flex justify-between items-baseline pt-3 border-t border-gray-100 mb-4">
                   <span className="text-[13px] font-semibold text-[#6B7280] uppercase tracking-wide">
-                    Total {displayHT ? 'HT' : 'TTC'}
+                    Total {totalLabel}
                   </span>
                   <span className="text-[22px] font-bold text-[#1A1A1A] tabular-nums tracking-tight">
                     {displayTotal.toFixed(2).replace('.', ',')} €
@@ -556,7 +565,7 @@ export function CartDrawer() {
                   ) : (
                     <>
                       <Lock className="w-4 h-4" strokeWidth={2} />
-                      Paiement securise
+                      Paiement sécurisé
                       <ArrowRight className="w-4 h-4" strokeWidth={2} />
                     </>
                   )}

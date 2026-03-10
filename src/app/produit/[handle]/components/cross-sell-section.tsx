@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '@/lib/shopify/types';
 import { ProductCardMini } from '@/components/product-card-mini';
 
@@ -24,33 +23,17 @@ export function CrossSellSection({ products }: { products: Product[] }) {
           Complétez votre équipement
         </h2>
 
-        <div className="hidden lg:flex items-center gap-1.5">
-          <button
-            onClick={() => scroll('left')}
-            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
-            aria-label="Précédent"
-          >
-            <ChevronLeft className="w-4 h-4 text-[#9CA3AF]" />
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
-            aria-label="Suivant"
-          >
-            <ChevronRight className="w-4 h-4 text-[#9CA3AF]" />
-          </button>
-        </div>
       </div>
 
-      {/* Cards */}
+      {/* Cards — grid on desktop, horizontal scroll on mobile */}
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0"
+        className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-x-visible lg:snap-none"
       >
         {products.slice(0, 5).map((product) => (
           <div
             key={product.id}
-            className="snap-start w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0 flex"
+            className="snap-start w-[200px] sm:w-[220px] lg:w-auto flex-shrink-0 lg:flex-shrink flex"
           >
             <ProductCardMini product={product} />
           </div>

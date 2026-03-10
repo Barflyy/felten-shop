@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Star, CheckCircle2 } from 'lucide-react';
+import { Star, CheckCircle2, ExternalLink } from 'lucide-react';
 import { REVIEWS, RATING_DISTRIBUTION } from './data/constants';
 
 export default function ReviewSection() {
@@ -36,7 +36,7 @@ export default function ReviewSection() {
             <div className="md:hidden flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100">
               <div className="text-center">
                 <span className="text-[32px] font-bold text-[#1A1A1A] leading-none block">
-                  4.9
+                  5.0
                 </span>
                 <div className="flex gap-0.5 justify-center mt-0.5">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -45,15 +45,11 @@ export default function ReviewSection() {
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-[12px] font-semibold text-[#1A1A1A]">340 avis vérifiés</p>
+                <p className="text-[12px] font-semibold text-[#1A1A1A]">14 avis Google</p>
                 <div className="flex gap-1.5 mt-1">
                   <span className="text-[10px] text-[#6B7280] border border-gray-200 px-1.5 py-0.5 rounded flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4] flex-shrink-0" />
                     Google
-                  </span>
-                  <span className="text-[10px] text-[#6B7280] border border-gray-200 px-1.5 py-0.5 rounded flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00B67A] flex-shrink-0" />
-                    Trustpilot
                   </span>
                 </div>
               </div>
@@ -63,14 +59,14 @@ export default function ReviewSection() {
             <div className="hidden md:block bg-white rounded-lg p-6 border border-gray-100">
               <div className="text-center mb-4">
                 <span className="text-[72px] font-bold text-[#1A1A1A] leading-none inline-block">
-                  4.9
+                  5.0
                 </span>
                 <div className="flex justify-center gap-1 mt-2">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Star key={i} className="w-5 h-5 text-[#FBBF24]" fill="#FBBF24" strokeWidth={0} />
                   ))}
                 </div>
-                <p className="text-[13px] text-[#6B7280] mt-2">Basé sur 340 avis vérifiés</p>
+                <p className="text-[13px] text-[#6B7280] mt-2">Basé sur 14 avis Google</p>
               </div>
               <div className="space-y-2 mb-6">
                 {RATING_DISTRIBUTION.map((r) => (
@@ -91,10 +87,6 @@ export default function ReviewSection() {
                 <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide border border-gray-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#4285F4]" />
                   Google
-                </span>
-                <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide border border-gray-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#00B67A]" />
-                  Trustpilot
                 </span>
               </div>
             </div>
@@ -124,13 +116,17 @@ export default function ReviewSection() {
                   <p className="text-[13px] lg:text-[14px] text-[#1A1A1A] leading-relaxed flex-grow mb-3">
                     &quot;{review.text}&quot;
                   </p>
-                  <p className="text-[10px] text-[#6B7280] mb-2">Produit : {review.product}</p>
+                  {review.product && (
+                    <p className="text-[10px] text-[#6B7280] mb-2">Produit : {review.product}</p>
+                  )}
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-[12px] lg:text-[13px] font-semibold text-[#1A1A1A] block">{review.name}</span>
-                      <span className="text-[10px] lg:text-[11px] text-[#6B7280]">
-                        {review.job} — {review.city}
-                      </span>
+                      {(review.job || review.city) && (
+                        <span className="text-[10px] lg:text-[11px] text-[#6B7280]">
+                          {[review.job, review.city].filter(Boolean).join(' — ')}
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-col items-end gap-0.5">
                       {review.verified && (
@@ -165,6 +161,23 @@ export default function ReviewSection() {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Google Review CTA */}
+        <div className="mt-8 lg:mt-12 text-center">
+          <p className="text-[13px] text-[#6B7280] mb-3">
+            Vous etes client Felten ? Votre avis compte enormement.
+          </p>
+          <a
+            href="https://g.page/r/CcFQnq3Msd1AEAE/review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 h-10 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold text-[#1A1A1A] hover:border-gray-300 hover:shadow-sm transition-all"
+          >
+            <Star className="w-4 h-4 text-[#FBBF24]" fill="#FBBF24" strokeWidth={0} />
+            Laisser un avis Google
+            <ExternalLink className="w-3.5 h-3.5 text-[#9CA3AF]" />
+          </a>
         </div>
       </div>
     </section>

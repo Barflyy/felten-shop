@@ -117,7 +117,8 @@ export const PRODUCT_BY_HANDLE_QUERY = `
               value
             }
             metafields(identifiers: [
-              {namespace: "custom", key: "contenu_de_boite"}
+              {namespace: "custom", key: "contenu_de_boite"},
+              {namespace: "custom", key: "contenu_de_boite_images"}
             ]) {
               namespace
               key

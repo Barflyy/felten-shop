@@ -7,7 +7,9 @@ import { Search, ShoppingCart, Menu, User, ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { mainNavigation } from '@/lib/navigation';
 import { normalizeUrl } from '@/lib/shopify/menu';
-import { useVAT } from '@/context/vat-context';
+import { useVAT, SHIPPING_COUNTRIES } from '@/context/vat-context';
+
+const VAT_RATES_MAP: Record<string, number> = { LU: 17, FR: 20, BE: 21, DE: 19 };
 
 const NAV_LINKS = [
   { label: 'Outils', href: '/collections/outils-electroportatifs' },
@@ -34,8 +36,10 @@ export default function HomepageHeader({
   onOpenCart,
 }: HomepageHeaderProps) {
   const pathname = usePathname();
-  const { vatInfo, toggleDisplayMode } = useVAT();
+  const { vatInfo, toggleDisplayMode, setCustomerCountry } = useVAT();
   const isPro = vatInfo.displayMode === 'HT';
+  const currentCountry = SHIPPING_COUNTRIES.find(c => c.code === vatInfo.customerCountry) || SHIPPING_COUNTRIES[0];
+  const [countryOpen, setCountryOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [activeCatId, setActiveCatId] = useState(mainNavigation[0]?.id || '');
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -95,8 +99,40 @@ export default function HomepageHeader({
               </span>
             </Link>
 
-            {/* Right: toggle + search + cart */}
+            {/* Right: country + toggle + search + cart */}
             <div className="flex items-center gap-1 -mr-2">
+              <div className="relative">
+                <button
+                  onClick={() => setCountryOpen(v => !v)}
+                  className="h-7 px-1.5 rounded-md bg-[#F5F5F5] text-[13px] leading-none"
+                  aria-label="Pays de livraison"
+                >
+                  {currentCountry.flag}
+                </button>
+                {countryOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setCountryOpen(false)} />
+                    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 min-w-[160px]">
+                      <p className="px-3 py-1.5 text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Livraison vers</p>
+                      {SHIPPING_COUNTRIES.map((c) => (
+                        <button
+                          key={c.code}
+                          onClick={() => { setCustomerCountry(c.code); setCountryOpen(false); }}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] transition-colors ${
+                            vatInfo.customerCountry === c.code
+                              ? 'text-[#1A1A1A] font-semibold bg-[#F5F5F5]'
+                              : 'text-[#6B7280] hover:bg-[#F5F5F5]'
+                          }`}
+                        >
+                          <span className="text-[15px]">{c.flag}</span>
+                          <span>{c.label}</span>
+                          <span className="text-[11px] text-[#9CA3AF] ml-auto">TVA {VAT_RATES_MAP[c.code]}%</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
               <button
                 onClick={toggleDisplayMode}
                 className="h-7 px-2 rounded-md bg-[#F5F5F5] text-[10px] font-bold text-[#4B5563] transition-colors"
@@ -178,6 +214,41 @@ export default function HomepageHeader({
 
             {/* Actions */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
+              {/* Country selector */}
+              <div className="relative">
+                <button
+                  onClick={() => setCountryOpen(v => !v)}
+                  className="inline-flex items-center gap-1.5 h-8 px-2.5 bg-[#F5F5F5] rounded-md text-[11px] font-semibold text-[#6B7280] hover:text-[#1A1A1A] transition-colors"
+                  aria-label="Pays de livraison"
+                >
+                  <span className="text-[14px] leading-none">{currentCountry.flag}</span>
+                  <span>{currentCountry.code}</span>
+                </button>
+                {countryOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setCountryOpen(false)} />
+                    <div className="absolute right-0 top-full mt-1.5 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 min-w-[180px]">
+                      <p className="px-3 py-1.5 text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Livraison vers</p>
+                      {SHIPPING_COUNTRIES.map((c) => (
+                        <button
+                          key={c.code}
+                          onClick={() => { setCustomerCountry(c.code); setCountryOpen(false); }}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] transition-colors ${
+                            vatInfo.customerCountry === c.code
+                              ? 'text-[#1A1A1A] font-semibold bg-[#F5F5F5]'
+                              : 'text-[#6B7280] hover:bg-[#F5F5F5]'
+                          }`}
+                        >
+                          <span className="text-[15px]">{c.flag}</span>
+                          <span>{c.label}</span>
+                          <span className="text-[11px] text-[#9CA3AF] ml-auto">TVA {VAT_RATES_MAP[c.code]}%</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+              {/* Pro/Particulier toggle */}
               <button
                 onClick={toggleDisplayMode}
                 className="inline-flex items-center h-8 p-0.5 bg-[#F5F5F5] rounded-md text-[11px] font-semibold transition-colors"

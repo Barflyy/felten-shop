@@ -102,7 +102,7 @@ export default function ProductCard({
               {formatPrice(comparePrice)}&nbsp;€
             </span>
           )}
-          <span className="text-[9px] lg:text-[10px] font-medium text-[#9CA3AF] ml-auto">TTC</span>
+          <span className="text-[9px] lg:text-[10px] font-medium text-[#9CA3AF] ml-auto">HTVA</span>
         </div>
 
         {/* Stock */}

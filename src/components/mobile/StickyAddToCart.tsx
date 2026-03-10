@@ -119,7 +119,7 @@ export function StickyAddToCart({
             ) : (
               <>
                 <ShoppingCart className="w-4 h-4" />
-                Ajouter
+                Ajouter au panier
               </>
             )}
           </button>

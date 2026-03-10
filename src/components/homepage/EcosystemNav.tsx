@@ -28,7 +28,7 @@ const ECOSYSTEMS = [
     name: 'PACKOUT',
     desc: 'Rangement modulable',
     url: '/collections/packout',
-    image: null,
+    image: '/images/ecosystems/packout.png',
     accent: 'from-[#1A1A1A]/10 to-[#1A1A1A]/5',
     badge: 'bg-[#1A1A1A]',
   },

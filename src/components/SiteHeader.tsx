@@ -15,7 +15,13 @@ export default function SiteHeader() {
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, 'change', (latest) => {
-    setHeaderScrolled(latest > 80);
+    // Hysteresis: scroll down past 80 to collapse, scroll back up past 40 to expand
+    // Prevents flickering when scroll position hovers around the threshold
+    setHeaderScrolled((prev) => {
+      if (!prev && latest > 80) return true;
+      if (prev && latest < 40) return false;
+      return prev;
+    });
   });
 
   const {

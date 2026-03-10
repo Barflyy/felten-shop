@@ -13,9 +13,11 @@ import TrustMarquee from './TrustMarquee';
 import EcosystemNav from './EcosystemNav';
 import CategoryGrid from './CategoryGrid';
 import BestsellerCarousel from './BestsellerCarousel';
+import WhyFeltenSection from './WhyFeltenSection';
 
 // Below-fold sections: lazy-loaded to reduce initial JS bundle
 const NewsletterSection = dynamic(() => import('./NewsletterSection'), { ssr: true });
+const ReviewSection = dynamic(() => import('./ReviewSection'), { ssr: true });
 
 const FloatingBadge = dynamic(() => import('./FloatingBadge'), { ssr: false });
 
@@ -54,8 +56,10 @@ export default function HomePage({ products }: { products: Product[] }) {
           addingId={addingId}
           onAddToCart={handleAddToCart}
         />
-        <CategoryGrid />
         <NewsletterSection />
+        <WhyFeltenSection />
+        <ReviewSection />
+        <CategoryGrid />
       </main>
 
       <Footer />

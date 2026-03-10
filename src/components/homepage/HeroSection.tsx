@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Phone } from 'lucide-react';
 
 export default function HeroSection() {
   return (
@@ -42,12 +42,13 @@ export default function HeroSection() {
             Catalogue
             <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </Link>
-          <Link
-            href="/contact"
-            className="flex-1 flex items-center justify-center py-3 border border-white/20 text-white text-[13px] font-medium rounded-lg hover:bg-white/10 transition-colors"
+          <a
+            href="tel:+352621304952"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 border border-white/20 text-white text-[13px] font-medium rounded-lg hover:bg-white/10 transition-colors"
           >
-            Nous contacter
-          </Link>
+            <Phone className="w-3.5 h-3.5" strokeWidth={2} />
+            Conseil gratuit
+          </a>
         </div>
       </div>
 
@@ -79,12 +80,13 @@ export default function HeroSection() {
                   Découvrir le catalogue
                   <ChevronRight className="w-4 h-4" strokeWidth={2} />
                 </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-7 py-3.5 border border-white/20 text-white text-[14px] font-medium rounded-lg hover:bg-white/10 transition-colors"
+                <a
+                  href="tel:+352621304952"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/20 text-white text-[14px] font-medium rounded-lg hover:bg-white/10 transition-colors"
                 >
-                  Nous contacter
-                </Link>
+                  <Phone className="w-4 h-4" strokeWidth={2} />
+                  Conseil gratuit
+                </a>
               </div>
             </div>
 
