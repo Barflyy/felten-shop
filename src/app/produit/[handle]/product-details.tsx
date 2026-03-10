@@ -257,6 +257,140 @@ export function ProductDetails({
     }
   };
 
+  // ── Render accordions ──
+  const renderAccordions = () => (
+    <div>
+      <Accordion title="Description" defaultOpen>
+        {renderDescriptionContent()}
+      </Accordion>
+
+      {contenuDeBoite && (() => {
+        const lines = contenuDeBoite.split("\n").filter(Boolean);
+        const rawImages = contenuDeBoiteImages && contenuDeBoiteImages !== "-"
+          ? contenuDeBoiteImages.split("\n").filter(Boolean).map((f: string) => f.trim()).filter((f: string) => f && f !== "-")
+          : [];
+        const CDN_BASE = "https://cdn.shopify.com/s/files/1/0750/5746/3564/files/";
+        const hasImages = rawImages.length > 0;
+
+        return (
+          <Accordion title="Contenu de la boîte">
+            {hasImages ? (
+              <div className="rounded-lg border border-gray-100 overflow-hidden">
+                {lines.map((line, i, arr) => {
+                  const file = rawImages[i];
+                  const imageUrl = file ? `${CDN_BASE}${encodeURIComponent(file)}` : null;
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
+                    >
+                      {imageUrl ? (
+                        <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                          <img
+                            src={imageUrl}
+                            alt={line.trim()}
+                            className="max-h-12 max-w-12 object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.parentElement!.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#9CA3AF]"><path d="M20 6 9 17l-5-5"/></svg>';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                          <Check className="w-4 h-4 text-[#9CA3AF]" />
+                        </div>
+                      )}
+                      <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-gray-100 overflow-hidden">
+                {lines.map((line, i, arr) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
+                  >
+                    <Check className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                    <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Accordion>
+        );
+      })()}
+
+      {features.length > 0 && (
+        <Accordion title="Caractéristiques">
+          <div className="rounded-lg border border-gray-100 overflow-hidden">
+            {features.map((feat, i) => {
+              const colonIdx = feat.indexOf(" : ");
+              const isKeyValue = colonIdx > 0 && colonIdx < 30;
+              return (
+                <div
+                  key={i}
+                  className={`flex flex-col lg:flex-row lg:items-center justify-between gap-1 lg:gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"
+                    } ${i < features.length - 1 ? "border-b border-gray-50" : ""}`}
+                >
+                  {isKeyValue ? (
+                    <>
+                      <span className="text-[#6B7280] text-[13px]">
+                        {feat.substring(0, colonIdx)}
+                      </span>
+                      <span className="text-[#1A1A1A] font-medium text-[13px]">
+                        {feat.substring(colonIdx + 3)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-[#4B5563] text-[13px] flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                      {feat}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </Accordion>
+      )}
+
+      {(specsRows.length > 0 || technicalSpecs.length > 0) && (
+        <Accordion title="Spécifications techniques">
+          <div className="rounded-lg border border-gray-100 overflow-hidden">
+            {(specsRows.length > 0
+              ? specsRows
+              : technicalSpecs
+            ).map((row, i) => (
+              <div
+                key={i}
+                className={`flex flex-col lg:flex-row lg:items-center justify-between gap-1 lg:gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"
+                  } ${i <
+                    (specsRows.length > 0
+                      ? specsRows
+                      : technicalSpecs
+                    ).length -
+                    1
+                    ? "border-b border-gray-50"
+                    : ""
+                  }`}
+              >
+                <span className="text-[#6B7280] text-[13px]">
+                  {row.label}
+                </span>
+                <span className="text-[#1A1A1A] font-medium text-[13px]">
+                  {row.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Accordion>
+      )}
+    </div>
+  );
+
   // ── Render description content ──
   const renderDescriptionContent = () => (
     <div>
@@ -302,8 +436,8 @@ export function ProductDetails({
 
           {/* ── Two-column layout ── */}
           <div className="flex flex-col lg:flex-row gap-3 lg:gap-12 items-start">
-            {/* LEFT: Sticky Gallery */}
-            <div className="w-full lg:w-[55%] lg:sticky lg:top-20 lg:self-start">
+            {/* LEFT: Gallery + Accordions (desktop) */}
+            <div className="w-full lg:w-[55%]">
               <ImageGallery
                 images={images}
                 title={product.title}
@@ -311,10 +445,14 @@ export function ProductDetails({
                 onImageChange={setSelectedImageIndex}
                 isNew={isNew}
               />
+              {/* Accordions — desktop only */}
+              <div className="hidden lg:block mt-8">
+                {renderAccordions()}
+              </div>
             </div>
 
-            {/* RIGHT: Product Info */}
-            <div className="w-full lg:w-[45%] pb-8">
+            {/* RIGHT: Product Info (sticky on desktop) */}
+            <div className="w-full lg:w-[45%] lg:sticky lg:top-20 lg:self-start pb-8">
               <div className="space-y-3 lg:space-y-5">
                 {/* Product Type + SKU */}
                 <div className="flex items-center gap-3">
@@ -613,139 +751,10 @@ export function ProductDetails({
                   </div>
                 </a>
 
-                {/* Separator */}
-                <div className="border-t border-gray-100" />
-
-                {/* Accordions */}
-                <div>
-                  <Accordion title="Description" defaultOpen>
-                    {renderDescriptionContent()}
-                  </Accordion>
-
-                  {contenuDeBoite && (() => {
-                    const lines = contenuDeBoite.split("\n").filter(Boolean);
-                    const rawImages = contenuDeBoiteImages && contenuDeBoiteImages !== "-"
-                      ? contenuDeBoiteImages.split("\n").filter(Boolean).map((f: string) => f.trim()).filter((f: string) => f && f !== "-")
-                      : [];
-                    const CDN_BASE = "https://cdn.shopify.com/s/files/1/0750/5746/3564/files/";
-                    const hasImages = rawImages.length > 0;
-
-                    return (
-                      <Accordion title="Contenu de la boîte">
-                        {hasImages ? (
-                          <div className="rounded-lg border border-gray-100 overflow-hidden">
-                            {lines.map((line, i, arr) => {
-                              const file = rawImages[i];
-                              const imageUrl = file ? `${CDN_BASE}${encodeURIComponent(file)}` : null;
-                              return (
-                                <div
-                                  key={i}
-                                  className={`flex items-center gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
-                                >
-                                  {imageUrl ? (
-                                    <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
-                                      <img
-                                        src={imageUrl}
-                                        alt={line.trim()}
-                                        className="max-h-12 max-w-12 object-contain"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display = 'none';
-                                          e.currentTarget.parentElement!.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#9CA3AF]"><path d="M20 6 9 17l-5-5"/></svg>';
-                                        }}
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
-                                      <Check className="w-4 h-4 text-[#9CA3AF]" />
-                                    </div>
-                                  )}
-                                  <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="rounded-lg border border-gray-100 overflow-hidden">
-                            {lines.map((line, i, arr) => (
-                              <div
-                                key={i}
-                                className={`flex items-center gap-3 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"} ${i < arr.length - 1 ? "border-b border-gray-50" : ""}`}
-                              >
-                                <Check className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
-                                <span className="text-[#4B5563] text-[13px]">{line.trim()}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </Accordion>
-                    );
-                  })()}
-
-                  {features.length > 0 && (
-                    <Accordion title="Caractéristiques">
-                      <div className="rounded-lg border border-gray-100 overflow-hidden">
-                        {features.map((feat, i) => {
-                          const colonIdx = feat.indexOf(" : ");
-                          const isKeyValue = colonIdx > 0 && colonIdx < 30;
-                          return (
-                            <div
-                              key={i}
-                              className={`flex flex-col lg:flex-row lg:items-center justify-between gap-1 lg:gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"
-                                } ${i < features.length - 1 ? "border-b border-gray-50" : ""}`}
-                            >
-                              {isKeyValue ? (
-                                <>
-                                  <span className="text-[#6B7280] text-[13px]">
-                                    {feat.substring(0, colonIdx)}
-                                  </span>
-                                  <span className="text-[#1A1A1A] font-medium text-[13px]">
-                                    {feat.substring(colonIdx + 3)}
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="text-[#4B5563] text-[13px] flex items-center gap-2">
-                                  <Check className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
-                                  {feat}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </Accordion>
-                  )}
-
-                  {(specsRows.length > 0 || technicalSpecs.length > 0) && (
-                    <Accordion title="Spécifications techniques">
-                      <div className="rounded-lg border border-gray-100 overflow-hidden">
-                        {(specsRows.length > 0
-                          ? specsRows
-                          : technicalSpecs
-                        ).map((row, i) => (
-                          <div
-                            key={i}
-                            className={`flex flex-col lg:flex-row lg:items-center justify-between gap-1 lg:gap-4 px-4 py-3 ${i % 2 === 0 ? "bg-[#FAFAFA]" : "bg-white"
-                              } ${i <
-                                (specsRows.length > 0
-                                  ? specsRows
-                                  : technicalSpecs
-                                ).length -
-                                1
-                                ? "border-b border-gray-50"
-                                : ""
-                              }`}
-                          >
-                            <span className="text-[#6B7280] text-[13px]">
-                              {row.label}
-                            </span>
-                            <span className="text-[#1A1A1A] font-medium text-[13px]">
-                              {row.value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </Accordion>
-                  )}
+                {/* Accordions — mobile only (on desktop they're in the left column) */}
+                <div className="lg:hidden">
+                  <div className="border-t border-gray-100 mb-3" />
+                  {renderAccordions()}
                 </div>
               </div>
             </div>
@@ -753,33 +762,49 @@ export function ProductDetails({
         </div>
 
         {/* Testimonials */}
-        <div className="bg-[#F9F9F9] border-t border-gray-100 py-8 lg:py-12">
+        <div className="bg-[#FAFAFA] border-t border-gray-100 py-10 lg:py-14">
           <div className="max-w-[1280px] mx-auto px-4 lg:px-8">
-            <h2 className="text-[15px] lg:text-[18px] font-bold text-[#1A1A1A] mb-5 lg:mb-6">
-              Nos clients valident le Service Felten
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h2 className="text-[18px] lg:text-[22px] font-bold text-[#1A1A1A] mb-3">
+                Ils recommandent notre magasin et notre SAV
+              </h2>
+              <div className="flex items-center justify-center gap-2">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="none">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <div className="flex gap-0.5">
+                  {[1,2,3,4,5].map((i) => (
+                    <svg key={i} viewBox="0 0 12 12" className="w-4 h-4" fill="#FBBC04"><polygon points="6,1 7.5,4.5 11,4.8 8.5,7 9.3,10.5 6,8.5 2.7,10.5 3.5,7 1,4.8 4.5,4.5"/></svg>
+                  ))}
+                </div>
+                <span className="text-[14px] font-semibold text-[#1A1A1A]">Note de 5/5</span>
+              </div>
+            </div>
+
+            {/* Cards — horizontal scroll on mobile, 3-col grid on desktop */}
+            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-3">
               {[
-                { name: 'Fabian Massard', text: 'Un stock de guerre et le service client qui va avec.' },
-                { name: 'Ben Coates', text: 'Le plus beau et gros revendeur Milwaukee, un réel plaisir.' },
-                { name: 'Edgar Probst', text: 'Choix énorme et service impeccable.' },
+                { name: 'Fabian M.', text: 'Un stock de guerre et le service client qui va avec.' },
+                { name: 'Ben C.', text: 'Le plus beau et gros revendeur Milwaukee, un réel plaisir.' },
+                { name: 'Edgar P.', text: 'Choix énorme et service impeccable.' },
               ].map(({ name, text }) => (
-                <div key={name} className="bg-white rounded-lg border border-gray-100 p-4 lg:p-5 flex flex-col gap-3">
-                  <div className="flex gap-0.5">
+                <div
+                  key={name}
+                  className="snap-start shrink-0 w-[80vw] max-w-[320px] lg:w-auto lg:max-w-none bg-white rounded-xl border border-gray-100 shadow-sm p-5 lg:p-6 flex flex-col"
+                >
+                  <div className="flex gap-0.5 mb-3">
                     {[1,2,3,4,5].map((i) => (
-                      <svg key={i} viewBox="0 0 12 12" className="w-3 h-3" fill="#FBBF24"><polygon points="6,1 7.5,4.5 11,4.8 8.5,7 9.3,10.5 6,8.5 2.7,10.5 3.5,7 1,4.8 4.5,4.5"/></svg>
+                      <svg key={i} viewBox="0 0 12 12" className="w-4 h-4" fill="#FBBC04"><polygon points="6,1 7.5,4.5 11,4.8 8.5,7 9.3,10.5 6,8.5 2.7,10.5 3.5,7 1,4.8 4.5,4.5"/></svg>
                     ))}
                   </div>
-                  <p className="text-[13px] lg:text-[14px] text-[#1A1A1A] leading-relaxed flex-grow">
-                    &ldquo;{text}&rdquo;
+                  <p className="text-[15px] lg:text-[16px] text-[#1A1A1A] leading-relaxed flex-grow mb-4">
+                    {text}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-[#4B5563]">{name}</span>
-                    <span className="text-[10px] text-[#6B7280] flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4]" />
-                      Google
-                    </span>
-                  </div>
+                  <span className="text-[14px] font-bold text-[#1A1A1A]">{name}</span>
                 </div>
               ))}
             </div>
