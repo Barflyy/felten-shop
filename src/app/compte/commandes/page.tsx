@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Package, Download, Loader2 } from 'lucide-react';
+import { ArrowLeft, Package, Download, Loader2, RefreshCw } from 'lucide-react';
 import { useCustomer } from '@/context/customer-context';
 
 function orderStatusLabel(status: string): { label: string; color: string } {
@@ -162,9 +162,9 @@ export default function CommandesPage() {
                     </div>
                   </div>
 
-                  {/* Invoice download */}
-                  {isPaid && (
-                    <div className="border-t border-gray-100 px-4 py-2.5">
+                  {/* Invoice download + Reorder */}
+                  <div className="border-t border-gray-100 px-4 py-2.5 flex items-center gap-4">
+                    {isPaid && (
                       <button
                         onClick={() => downloadInvoice(order.orderNumber)}
                         disabled={isDownloading}
@@ -175,10 +175,19 @@ export default function CommandesPage() {
                         ) : (
                           <Download className="w-3.5 h-3.5" />
                         )}
-                        Télécharger la facture
+                        Facture
                       </button>
-                    </div>
-                  )}
+                    )}
+                    {lineItems[0]?.variant?.product?.handle && (
+                      <Link
+                        href={`/produit/${lineItems[0].variant.product.handle}`}
+                        className="flex items-center gap-1.5 text-[12px] font-medium text-[#DB021D] hover:text-[#B8011A] transition-colors ml-auto"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Recommander
+                      </Link>
+                    )}
+                  </div>
                 </div>
               );
             })}

@@ -3,6 +3,14 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Customer } from '@/lib/shopify/types';
 
+interface CustomerUpdateInput {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+}
+
 interface CustomerContextType {
   customer: Customer | null;
   accessToken: string | null;
@@ -16,6 +24,7 @@ interface CustomerContextType {
     companyName: string;
     valid: boolean;
   }) => Promise<{ success: boolean; error?: string }>;
+  updateCustomer: (data: CustomerUpdateInput) => Promise<{ success: boolean; error?: string }>;
   refreshCustomer: () => Promise<void>;
 }
 
@@ -142,6 +151,32 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateCustomer = async (data: CustomerUpdateInput) => {
+    const token = getStoredToken();
+    if (!token) return { success: false, error: 'Non connecté' };
+
+    try {
+      const response = await fetch('/api/customer/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken: token, customer: data }),
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        return { success: false, error: result.error };
+      }
+
+      // Refresh customer data
+      await fetchCustomer(token);
+      return { success: true };
+    } catch (error) {
+      console.error('Customer update error:', error);
+      return { success: false, error: 'Erreur lors de la mise à jour' };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(TOKEN_EXPIRY_KEY);
@@ -158,6 +193,7 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         register,
+        updateCustomer,
         refreshCustomer,
       }}
     >

@@ -11,12 +11,15 @@ import {
   ChevronRight,
   ArrowLeft,
   ArrowRight,
-  Heart,
+
   FileText,
   Download,
   Loader2,
   Building2,
+  MessageCircle,
+  RefreshCw,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useCustomer } from '@/context/customer-context';
 
 function orderStatusLabel(status: string): { label: string; color: string } {
@@ -115,10 +118,10 @@ export default function ComptePage() {
 
   const NAV_ITEMS = [
     { href: '/compte/commandes', label: 'Mes commandes', desc: `${totalOrders} commande${totalOrders !== 1 ? 's' : ''}`, icon: Package },
-    { href: '/compte/favoris', label: 'Mes favoris', desc: 'Produits sauvegardés', icon: Heart },
-    ...(isPro || isPending ? [{ href: '/compte/factures', label: 'Mes factures', desc: 'Télécharger vos factures', icon: FileText }] : []),
+...(isPro || isPending ? [{ href: '/compte/factures', label: 'Mes factures', desc: 'Télécharger vos factures', icon: FileText }] : []),
     { href: '/compte/adresses', label: 'Adresses', desc: 'Livraison & facturation', icon: MapPin },
     { href: '/compte/profil', label: 'Mon profil', desc: 'Informations personnelles', icon: User },
+    { href: '/contact', label: 'Besoin d\u2019aide ?', desc: 'SAV & assistance Florian', icon: MessageCircle },
   ];
 
   return (
@@ -194,9 +197,9 @@ export default function ComptePage() {
                 <ChevronRight className="w-4 h-4 text-[#9CA3AF] flex-shrink-0" />
               </Link>
 
-              {/* Invoice download */}
-              {lastOrder.financialStatus.toLowerCase() === 'paid' && (
-                <div className="border-t border-gray-200/60 px-4 py-2.5">
+              {/* Invoice download + Reorder */}
+              <div className="border-t border-gray-200/60 px-4 py-2.5 flex items-center gap-4">
+                {lastOrder.financialStatus.toLowerCase() === 'paid' && (
                   <button
                     onClick={() => downloadInvoice(lastOrder.orderNumber)}
                     disabled={downloadingInvoice}
@@ -207,10 +210,17 @@ export default function ComptePage() {
                     ) : (
                       <Download className="w-3.5 h-3.5" />
                     )}
-                    Télécharger la facture
+                    Facture
                   </button>
-                </div>
-              )}
+                )}
+                <Link
+                  href={`/produit/${lastOrder.lineItems?.edges?.[0]?.node?.variant?.product?.handle || ''}`}
+                  className="flex items-center gap-1.5 text-[12px] font-medium text-[#DB021D] hover:text-[#B8011A] transition-colors ml-auto"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  Recommander
+                </Link>
+              </div>
             </div>
           </div>
         )}
@@ -246,6 +256,30 @@ export default function ComptePage() {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* SAV — Florian */}
+        <div className="mb-8 bg-[#F5F5F5] rounded-lg px-4 py-4 flex items-center gap-3.5">
+          <Image
+            src="/images/florian-avatar.png"
+            alt="Florian"
+            width={44}
+            height={44}
+            className="rounded-full flex-shrink-0 object-cover"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-semibold text-[#1A1A1A]">Un souci avec une commande ?</p>
+            <p className="text-[12px] text-[#6B7280] mt-0.5">Florian vous répond personnellement.</p>
+          </div>
+          <a
+            href="https://wa.me/352621304952"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 h-9 px-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white text-[12px] font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            WhatsApp
+          </a>
         </div>
 
         {/* Actions */}

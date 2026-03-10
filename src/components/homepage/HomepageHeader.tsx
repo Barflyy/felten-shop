@@ -3,11 +3,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ShoppingCart, Menu, User, ChevronRight } from 'lucide-react';
+import { Search, ShoppingCart, Menu, User, ChevronRight, ChevronDown, LayoutDashboard, Package, FileText, MapPin, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { mainNavigation } from '@/lib/navigation';
 import { normalizeUrl } from '@/lib/shopify/menu';
 import { useVAT, SHIPPING_COUNTRIES } from '@/context/vat-context';
+import { useCustomer } from '@/context/customer-context';
 
 const VAT_RATES_MAP: Record<string, number> = { LU: 17, FR: 20, BE: 21, DE: 19 };
 
@@ -39,10 +40,31 @@ export default function HomepageHeader({
   const { vatInfo, toggleDisplayMode, setCustomerCountry } = useVAT();
   const isPro = vatInfo.displayMode === 'HT';
   const currentCountry = SHIPPING_COUNTRIES.find(c => c.code === vatInfo.customerCountry) || SHIPPING_COUNTRIES[0];
+  const { customer, isAuthenticated, logout } = useCustomer();
   const [countryOpen, setCountryOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [activeCatId, setActiveCatId] = useState(mainNavigation[0]?.id || '');
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const accountTimeout = useRef<NodeJS.Timeout | null>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+
+  // Account dropdown display name
+  const accountDisplayName = isAuthenticated && customer
+    ? customer.defaultAddress?.company || customer.firstName
+    : null;
+
+  const openAccount = useCallback(() => {
+    if (accountTimeout.current) {
+      clearTimeout(accountTimeout.current);
+      accountTimeout.current = null;
+    }
+    setAccountOpen(true);
+  }, []);
+
+  const closeAccount = useCallback(() => {
+    accountTimeout.current = setTimeout(() => setAccountOpen(false), 150);
+  }, []);
 
   const openMega = useCallback(() => {
     if (closeTimeout.current) {
@@ -62,6 +84,7 @@ export default function HomepageHeader({
   useEffect(() => {
     return () => {
       if (closeTimeout.current) clearTimeout(closeTimeout.current);
+      if (accountTimeout.current) clearTimeout(accountTimeout.current);
     };
   }, []);
 
@@ -112,21 +135,21 @@ export default function HomepageHeader({
                 {countryOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setCountryOpen(false)} />
-                    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 min-w-[160px]">
+                    <div className="absolute left-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 whitespace-nowrap">
                       <p className="px-3 py-1.5 text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Livraison vers</p>
                       {SHIPPING_COUNTRIES.map((c) => (
                         <button
                           key={c.code}
                           onClick={() => { setCustomerCountry(c.code); setCountryOpen(false); }}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] transition-colors ${
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] whitespace-nowrap transition-colors ${
                             vatInfo.customerCountry === c.code
                               ? 'text-[#1A1A1A] font-semibold bg-[#F5F5F5]'
                               : 'text-[#6B7280] hover:bg-[#F5F5F5]'
                           }`}
                         >
                           <span className="text-[15px]">{c.flag}</span>
-                          <span>{c.label}</span>
-                          <span className="text-[11px] text-[#9CA3AF] ml-auto">TVA {VAT_RATES_MAP[c.code]}%</span>
+                          <span className="shrink-0">{c.label}</span>
+                          <span className="text-[11px] text-[#9CA3AF] shrink-0 ml-auto">TVA {VAT_RATES_MAP[c.code]}%</span>
                         </button>
                       ))}
                     </div>
@@ -140,6 +163,57 @@ export default function HomepageHeader({
               >
                 {isPro ? 'PRO' : 'PART.'}
               </button>
+              {/* Mobile account */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setAccountOpen(v => !v);
+                    } else {
+                      window.location.href = '/connexion';
+                    }
+                  }}
+                  className="relative w-10 h-10 flex items-center justify-center text-[#1A1A1A]"
+                  aria-label="Mon compte"
+                >
+                  <User className="w-5 h-5" strokeWidth={2} />
+                  {isAuthenticated && (
+                    <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                  )}
+                </button>
+                {accountOpen && isAuthenticated && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setAccountOpen(false)} />
+                    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 min-w-[200px]">
+                      <p className="px-4 py-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">{accountDisplayName}</p>
+                      <Link href="/compte" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <LayoutDashboard className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mon tableau de bord
+                      </Link>
+                      <Link href="/compte/commandes" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <Package className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mes commandes
+                      </Link>
+                      <Link href="/compte/factures" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <FileText className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mes factures
+                      </Link>
+                      <Link href="/compte/adresses" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <MapPin className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mes adresses
+                      </Link>
+                      <div className="my-1 border-t border-gray-100" />
+                      <button
+                        onClick={() => { logout(); setAccountOpen(false); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#DB021D] hover:bg-red-50 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" strokeWidth={1.8} />
+                        Déconnexion
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
               <button
                 onClick={onOpenSearch}
                 className="w-10 h-10 flex items-center justify-center text-[#1A1A1A]"
@@ -227,21 +301,21 @@ export default function HomepageHeader({
                 {countryOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setCountryOpen(false)} />
-                    <div className="absolute right-0 top-full mt-1.5 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 min-w-[180px]">
+                    <div className="absolute right-0 top-full mt-1.5 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 whitespace-nowrap">
                       <p className="px-3 py-1.5 text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Livraison vers</p>
                       {SHIPPING_COUNTRIES.map((c) => (
                         <button
                           key={c.code}
                           onClick={() => { setCustomerCountry(c.code); setCountryOpen(false); }}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] transition-colors ${
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] whitespace-nowrap transition-colors ${
                             vatInfo.customerCountry === c.code
                               ? 'text-[#1A1A1A] font-semibold bg-[#F5F5F5]'
                               : 'text-[#6B7280] hover:bg-[#F5F5F5]'
                           }`}
                         >
                           <span className="text-[15px]">{c.flag}</span>
-                          <span>{c.label}</span>
-                          <span className="text-[11px] text-[#9CA3AF] ml-auto">TVA {VAT_RATES_MAP[c.code]}%</span>
+                          <span className="shrink-0">{c.label}</span>
+                          <span className="text-[11px] text-[#9CA3AF] shrink-0 ml-auto">TVA {VAT_RATES_MAP[c.code]}%</span>
                         </button>
                       ))}
                     </div>
@@ -261,13 +335,57 @@ export default function HomepageHeader({
                   Pro
                 </span>
               </button>
-              <Link
-                href="/connexion"
-                className="flex items-center gap-2 px-3 h-10 text-[#1A1A1A] text-[13px] font-medium hover:text-[#DB021D] transition-colors rounded-lg"
-              >
-                <User className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                <span className="hidden xl:inline">Compte</span>
-              </Link>
+              {/* Account */}
+              {isAuthenticated && accountDisplayName ? (
+                <div
+                  ref={accountRef}
+                  className="relative"
+                  onMouseEnter={openAccount}
+                  onMouseLeave={closeAccount}
+                >
+                  <button className="flex items-center gap-1.5 px-3 h-10 text-[#1A1A1A] text-[13px] font-medium hover:text-[#DB021D] transition-colors rounded-lg cursor-pointer">
+                    <User className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                    <span className="hidden xl:inline max-w-[120px] truncate">{accountDisplayName}</span>
+                    <ChevronDown className="w-3.5 h-3.5 hidden xl:block" strokeWidth={2} />
+                  </button>
+                  {accountOpen && (
+                    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 min-w-[200px]">
+                      <Link href="/compte" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <LayoutDashboard className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mon tableau de bord
+                      </Link>
+                      <Link href="/compte/commandes" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <Package className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mes commandes
+                      </Link>
+                      <Link href="/compte/factures" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <FileText className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mes factures
+                      </Link>
+                      <Link href="/compte/adresses" onClick={() => setAccountOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors">
+                        <MapPin className="w-4 h-4 text-[#9CA3AF]" strokeWidth={1.8} />
+                        Mes adresses
+                      </Link>
+                      <div className="my-1 border-t border-gray-100" />
+                      <button
+                        onClick={() => { logout(); setAccountOpen(false); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-[#DB021D] hover:bg-red-50 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" strokeWidth={1.8} />
+                        Déconnexion
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/connexion"
+                  className="flex items-center gap-2 px-3 h-10 text-[#1A1A1A] text-[13px] font-medium hover:text-[#DB021D] transition-colors rounded-lg"
+                >
+                  <User className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  <span className="hidden xl:inline">Compte</span>
+                </Link>
+              )}
               <button
                 onClick={onOpenCart}
                 className="relative flex items-center gap-2 px-4 h-10 bg-[#1A1A1A] text-white rounded-lg text-[13px] font-semibold hover:bg-[#DB021D] transition-colors cursor-pointer"

@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { CartProvider } from '@/context/cart-context';
 import { CustomerProvider } from '@/context/customer-context';
 import { VATProvider } from '@/context/vat-context';
-import { WishlistProvider } from '@/context/wishlist-context';
+
 
 const CartDrawer = dynamic(() => import('@/components/cart-drawer').then(m => m.CartDrawer), {
   ssr: false,
@@ -24,9 +24,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <CustomerProvider>
       <VATProvider>
         <CartProvider>
-          <WishlistProvider>
-            {children}
-          </WishlistProvider>
+          {children}
           <CartDrawer />
           <CookieBanner />
           <GlobalFloatingElements />
