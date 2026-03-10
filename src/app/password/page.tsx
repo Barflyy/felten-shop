@@ -3,17 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Lock, ShieldCheck, MapPin, Headphones, Mail, ArrowLeft } from 'lucide-react';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const },
-  }),
-};
+import { ArrowRight, Lock, ShieldCheck, MapPin, Headphones, Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 const TOOLS = [
   { src: '/images/categories/outils-electroportatifs.webp', alt: 'Perceuse Milwaukee' },
@@ -69,253 +59,240 @@ export default function PasswordPage() {
     }
   };
 
-  const handleEmail = (e: FormEvent) => {
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+
+  const handleEmail = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes('@')) return;
-    // TODO: connect to newsletter API
-    setEmailSent(true);
+    setEmailLoading(true);
+    setEmailError(false);
+
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        setEmailSent(true);
+      } else {
+        setEmailError(true);
+      }
+    } catch {
+      setEmailError(true);
+    } finally {
+      setEmailLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#0a0a0a] flex flex-col">
-      <div className="flex-1 flex flex-col items-center justify-center px-5 py-14 lg:py-20">
-        <div className="w-full max-w-[440px] flex flex-col items-center">
+    <div className="min-h-[100dvh] bg-white flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-white border-b border-gray-100">
+        <div className="max-w-[480px] mx-auto px-4 h-14 flex items-center justify-center">
+          <span className="text-[1rem] tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+            <span className="font-black text-[#1A1A1A] underline decoration-[#DB021D] decoration-2 underline-offset-2">FELTEN</span>
+            <span className="font-normal text-[#1A1A1A]"> SHOP</span>
+          </span>
+        </div>
+      </header>
 
-          {/* ─── Logo ─── */}
-          <motion.div
-            custom={0}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="mb-5"
-          >
-            <span
-              className="text-[1.6rem] lg:text-[1.8rem] tracking-tight leading-none"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              <span className="font-black text-white">FELTEN</span>
-              <span className="text-[#db001c] text-[1.8rem] lg:text-[2rem] leading-none">.</span>
-              <span className="font-normal text-neutral-400"> SHOP</span>
-            </span>
-          </motion.div>
+      {/* Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-[440px]">
 
-          {/* ─── Badge ─── */}
-          <motion.div
-            custom={1}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="flex items-center gap-2.5 mb-8"
-          >
+          {/* Badge */}
+          <div className="flex items-center justify-center gap-2.5 mb-6">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#db001c] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#db001c]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#DB021D] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#DB021D]" />
             </span>
-            <span className="text-[10px] font-medium text-neutral-500 uppercase tracking-[0.2em]">
+            <span className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.15em]">
               Ouverture prochainement
             </span>
-          </motion.div>
+          </div>
 
-          {/* ─── Hero ─── */}
-          <motion.h1
-            custom={2}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="text-center text-[28px] lg:text-[38px] font-bold text-white leading-[1.12] mb-3"
-          >
-            Votre revendeur
-            <br />
-            <span className="text-[#db001c]">Milwaukee</span> arrive.
-          </motion.h1>
+          {/* Hero */}
+          <div className="text-center mb-8">
+            <h1 className="text-[26px] lg:text-[32px] font-bold text-[#1A1A1A] leading-[1.15] mb-2">
+              Votre revendeur<br />
+              <span className="text-[#DB021D]">Milwaukee</span> arrive.
+            </h1>
+            <p className="text-[14px] text-[#6B7280]">
+              +450 outils pros. Luxembourg.
+            </p>
+          </div>
 
-          <motion.p
-            custom={3}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="text-[14px] lg:text-[15px] text-neutral-500 text-center mb-10"
-          >
-            +450 outils pros. Luxembourg.
-          </motion.p>
-
-          {/* ─── Action Zone ─── */}
-          <motion.div
-            custom={4}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="w-full mb-12"
-          >
-            <AnimatePresence mode="wait">
-              {!isPasswordMode ? (
-                <motion.div
-                  key="email"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {!emailSent ? (
-                    <>
-                      <form onSubmit={handleEmail} className="flex gap-2">
-                        <div className="relative flex-1">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-neutral-600" />
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Entrez votre e-mail"
-                            className="w-full h-11 pl-9 pr-3 bg-neutral-900 border border-neutral-800 rounded-lg text-[13px] text-white placeholder:text-neutral-600 outline-none focus:border-neutral-600 transition-colors"
-                          />
-                        </div>
-                        <button
-                          type="submit"
-                          disabled={!email}
-                          className="h-11 px-5 bg-[#db001c] hover:bg-[#b8001a] disabled:opacity-30 text-white text-[13px] font-semibold rounded-lg transition-colors flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
-                        >
-                          Me prévenir
-                        </button>
-                      </form>
-                      <p className="text-[11px] text-neutral-600 text-center mt-3">
-                        Inscrivez-vous pour recevoir <span className="text-[#db001c] font-medium">-10%</span> le jour de l&apos;ouverture.
-                      </p>
-                      <div className="text-center mt-4">
-                        <button
-                          onClick={() => setIsPasswordMode(true)}
-                          className="text-[11px] text-neutral-600 hover:text-neutral-400 hover:underline underline-offset-2 transition-colors cursor-pointer"
-                        >
-                          Accès VIP / Pro (Mot de passe)
-                        </button>
+          {/* Action Zone */}
+          <div className="w-full mb-10">
+            {!isPasswordMode ? (
+              <div>
+                {!emailSent ? (
+                  <>
+                    <form onSubmit={handleEmail} className="space-y-3">
+                      <div className="relative">
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Entrez votre e-mail"
+                          className="w-full h-11 pl-10 pr-3.5 rounded-lg border border-gray-200 bg-white text-[14px] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1A1A1A] transition-colors"
+                        />
                       </div>
-                    </>
-                  ) : (
-                    <div className="text-center py-2">
-                      <div className="w-10 h-10 rounded-full bg-[#db001c]/10 flex items-center justify-center mx-auto mb-3">
-                        <Mail className="w-5 h-5 text-[#db001c]" />
+                      <button
+                        type="submit"
+                        disabled={!email || emailLoading}
+                        className="w-full h-11 bg-[#DB021D] hover:bg-[#B8011A] disabled:opacity-40 text-white text-[14px] font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                      >
+                        {emailLoading ? (
+                          <>
+                            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Inscription...
+                          </>
+                        ) : (
+                          <>
+                            Me prévenir de l&apos;ouverture
+                            <ArrowRight className="w-4 h-4" />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                    {emailError && (
+                      <div className="bg-red-50 text-[#DB021D] text-[13px] font-medium px-4 py-3 rounded-lg mt-3">
+                        Une erreur est survenue. Réessayez.
                       </div>
-                      <p className="text-[14px] font-medium text-white mb-1">C&apos;est noté !</p>
-                      <p className="text-[12px] text-neutral-500">
-                        Vous recevrez un e-mail avec votre code <span className="text-[#db001c]">-10%</span> à l&apos;ouverture.
-                      </p>
+                    )}
+                    <p className="text-[12px] text-[#9CA3AF] text-center mt-3">
+                      Soyez informé dès l&apos;ouverture du site.
+                    </p>
+                    <div className="text-center mt-4">
+                      <button
+                        onClick={() => setIsPasswordMode(true)}
+                        className="text-[12px] text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                      >
+                        <Lock className="w-3 h-3" />
+                        Accès VIP / Pro
+                      </button>
                     </div>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="password"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <form onSubmit={handlePassword} className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-neutral-600" />
+                  </>
+                ) : (
+                  <div className="text-center bg-[#F5F5F5] rounded-lg p-6">
+                    <div className="w-10 h-10 rounded-full bg-[#DB021D]/10 flex items-center justify-center mx-auto mb-3">
+                      <CheckCircle2 className="w-5 h-5 text-[#DB021D]" />
+                    </div>
+                    <p className="text-[15px] font-semibold text-[#1A1A1A] mb-1">C&apos;est noté !</p>
+                    <p className="text-[13px] text-[#6B7280]">
+                      Vous serez prévenu dès l&apos;ouverture du site.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <form onSubmit={handlePassword} className="space-y-3">
+                  <div>
+                    <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
+                      Mot de passe
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
                       <input
                         type="password"
                         value={password}
                         onChange={(e) => { setPassword(e.target.value); setError(false); }}
                         placeholder="Mot de passe"
-                        className={`w-full h-11 pl-9 pr-3 bg-neutral-900 border rounded-lg text-[13px] text-white placeholder:text-neutral-600 outline-none transition-colors ${
-                          error ? 'border-red-500/50' : 'border-neutral-800 focus:border-neutral-600'
+                        className={`w-full h-11 pl-10 pr-3.5 rounded-lg border bg-white text-[14px] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:outline-none transition-colors ${
+                          error ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-[#1A1A1A]'
                         }`}
                         autoFocus
                       />
                     </div>
-                    <button
-                      type="submit"
-                      disabled={loading || !password}
-                      className="h-11 px-5 bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white text-[13px] font-semibold rounded-lg transition-colors flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
-                    >
-                      {loading ? (
-                        <div className="w-4 h-4 border-2 border-neutral-600 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          Entrer
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </>
-                      )}
-                    </button>
-                  </form>
-                  {error && (
-                    <p className="text-[11px] text-red-400/70 mt-2 pl-1">Mot de passe incorrect.</p>
-                  )}
-                  <div className="text-center mt-4">
-                    <button
-                      onClick={() => { setIsPasswordMode(false); setError(false); }}
-                      className="text-[11px] text-neutral-600 hover:text-neutral-400 transition-colors cursor-pointer inline-flex items-center gap-1"
-                    >
-                      <ArrowLeft className="w-3 h-3" />
-                      Retour
-                    </button>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                  <button
+                    type="submit"
+                    disabled={loading || !password}
+                    className="w-full h-11 bg-[#DB021D] hover:bg-[#B8011A] disabled:opacity-40 text-white text-[14px] font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Vérification...
+                      </>
+                    ) : (
+                      <>
+                        Entrer sur le site
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </form>
+                {error && (
+                  <div className="bg-red-50 text-[#DB021D] text-[13px] font-medium px-4 py-3 rounded-lg mt-3">
+                    Mot de passe incorrect.
+                  </div>
+                )}
+                <div className="text-center mt-4">
+                  <button
+                    onClick={() => { setIsPasswordMode(false); setError(false); }}
+                    className="text-[12px] text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors cursor-pointer inline-flex items-center gap-1"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    Retour
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
-          {/* ─── Tool Carousel ─── */}
-          <motion.div
-            custom={5}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="flex justify-center gap-3 mb-12 w-full"
-          >
+          {/* Tool Images */}
+          <div className="flex justify-center gap-3 mb-10">
             {TOOLS.map((tool) => (
               <div
                 key={tool.src}
-                className="w-[80px] h-[80px] lg:w-[96px] lg:h-[96px] rounded-xl bg-neutral-900 border border-neutral-800/60 overflow-hidden relative group transition-all duration-500 hover:-translate-y-1 hover:border-neutral-700/80 cursor-default"
+                className="w-[80px] h-[80px] lg:w-[96px] lg:h-[96px] rounded-lg bg-[#F5F5F5] overflow-hidden relative"
               >
                 <Image
                   src={tool.src}
                   alt={tool.alt}
                   fill
-                  className="object-cover brightness-[0.4] group-hover:brightness-100 group-hover:opacity-100 opacity-50 transition-all duration-500"
+                  className="object-cover"
                   sizes="96px"
                 />
               </div>
             ))}
-          </motion.div>
+          </div>
 
-          {/* ─── Features ─── */}
-          <motion.div
-            custom={6}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8 w-full"
-          >
+          {/* Features */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
             {FEATURES.map((f) => (
-              <div key={f.title} className="flex flex-col items-center text-center gap-2">
-                <f.icon className="w-5 h-5 text-neutral-500" strokeWidth={1.5} />
+              <div key={f.title} className="flex flex-col items-center text-center gap-2 bg-[#F5F5F5] rounded-lg p-4">
+                <div className="w-9 h-9 rounded-lg bg-[#DB021D]/10 flex items-center justify-center">
+                  <f.icon className="w-[18px] h-[18px] text-[#DB021D]" strokeWidth={1.5} />
+                </div>
                 <div>
-                  <p className="text-[13px] font-medium text-white mb-0.5">{f.title}</p>
-                  <p className="text-[11px] text-neutral-600 leading-snug">{f.desc}</p>
+                  <p className="text-[13px] font-semibold text-[#1A1A1A] mb-0.5">{f.title}</p>
+                  <p className="text-[12px] text-[#6B7280] leading-snug">{f.desc}</p>
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* ─── Footer ─── */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
-        className="pb-6 pt-4 text-center"
-      >
+      {/* Footer */}
+      <footer className="pb-6 pt-4 text-center border-t border-gray-100 mt-auto">
         <a
           href="https://wa.me/352621304952"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[11px] text-neutral-600 hover:text-neutral-400 transition-colors"
+          className="text-[12px] text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors"
         >
           Une question ? Contactez Florian &rarr;
         </a>
-      </motion.footer>
+      </footer>
     </div>
   );
 }
