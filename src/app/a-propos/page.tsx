@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, ShieldCheck, Award, Zap, Users, Package, Clock, HeartHandshake, CheckCircle } from 'lucide-react';
 import { Footer } from '@/components/footer';
+
+export const metadata: Metadata = {
+  title: 'À propos — Felten Shop | Revendeur Agréé Milwaukee Luxembourg',
+  description: 'Découvrez Felten Shop, revendeur agréé Milwaukee au Luxembourg. Notre équipe de passionnés vous accompagne dans le choix de votre outillage professionnel.',
+  alternates: { canonical: 'https://felten.shop/a-propos' },
+};
 
 const STATS = [
   { value: '5K+', label: 'Clients satisfaits', icon: <Users className="w-5 h-5" strokeWidth={2} /> },

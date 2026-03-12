@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { shopifyFetch } from '@/lib/shopify/client';
 import { SEARCH_PRODUCTS_QUERY } from '@/lib/shopify/queries';
@@ -5,6 +6,12 @@ import { Product } from '@/lib/shopify/types';
 import { ProductCard } from '@/components/product-card';
 import { Footer } from '@/components/footer';
 import SiteHeader from '@/components/SiteHeader';
+
+export const metadata: Metadata = {
+  title: 'Recherche — Felten Shop',
+  description: 'Recherchez parmi notre catalogue complet d\'outillage Milwaukee. Perceuses, visseuses, meuleuses, batteries et accessoires.',
+  robots: { index: false, follow: true },
+};
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string }>;

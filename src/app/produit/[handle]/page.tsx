@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${product.title} - Felten Milwaukee`,
     description: product.description?.slice(0, 160) || `Découvrez ${product.title} chez Felten Milwaukee.`,
+    alternates: {
+      canonical: `https://felten.shop/produit/${handle}`,
+    },
     openGraph: {
       title: product.title,
       description: product.description || '',
@@ -71,6 +74,37 @@ export default async function ProduitPage({ params }: PageProps) {
     );
   }
 
+  const firstVariant = product.variants?.edges?.[0]?.node;
+  const price = firstVariant?.price?.amount || product.priceRange.minVariantPrice.amount;
+  const currency = firstVariant?.price?.currencyCode || product.priceRange.minVariantPrice.currencyCode;
+  const isAvailable = product.availableForSale !== false;
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description,
+    image: product.featuredImage?.url,
+    url: `https://felten.shop/produit/${handle}`,
+    brand: {
+      '@type': 'Brand',
+      name: 'Milwaukee',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://felten.shop/produit/${handle}`,
+      priceCurrency: currency,
+      price: price,
+      availability: isAvailable
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'Felten Shop',
+      },
+    },
+  };
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -101,6 +135,10 @@ export default async function ProduitPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
       <SiteHeader />
       <ProductDetails product={product} relatedProducts={relatedProducts} specsMap={specsMap} />

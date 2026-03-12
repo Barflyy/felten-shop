@@ -18,8 +18,16 @@ export async function generateMetadata({ params }: Props) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
   return {
-    title: `${title} — Felten Shop | Milwaukee`,
-    description: `Découvrez notre sélection ${title.toLowerCase()} Milwaukee. Revendeur agréé, garantie 3 ans.`,
+    title: `${title} Milwaukee — Felten Shop Luxembourg`,
+    description: `Découvrez notre sélection ${title.toLowerCase()} Milwaukee au Luxembourg. Revendeur agréé, garantie 3 ans, livraison rapide.`,
+    alternates: {
+      canonical: `https://felten.shop/collections/${handle}`,
+    },
+    openGraph: {
+      title: `${title} Milwaukee — Felten Shop`,
+      description: `${title} Milwaukee. Revendeur agréé au Luxembourg, garantie 3 ans.`,
+      url: `https://felten.shop/collections/${handle}`,
+    },
   };
 }
 

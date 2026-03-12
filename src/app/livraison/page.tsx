@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, Truck, MapPin, Clock, Package, CheckCircle, ShieldCheck } from 'lucide-react';
 import { Footer } from '@/components/footer';
+
+export const metadata: Metadata = {
+  title: 'Livraison — Felten Shop | Revendeur Milwaukee Luxembourg',
+  description: 'Livraison rapide au Luxembourg, Belgique et Europe. Frais de port offerts dès 200€. Suivi en temps réel de votre commande.',
+  alternates: { canonical: 'https://felten.shop/livraison' },
+};
 
 const ZONES = [
   { zone: 'Belgique', flag: '🇧🇪', standard: '5,99€', express: '12,99€', gratuit: '150€' },
