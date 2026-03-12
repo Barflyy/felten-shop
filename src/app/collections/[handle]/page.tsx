@@ -19,13 +19,13 @@ export async function generateMetadata({ params }: Props) {
 
   return {
     title: `${title} Milwaukee — Felten Shop Luxembourg`,
-    description: `Découvrez notre sélection ${title.toLowerCase()} Milwaukee au Luxembourg. Revendeur agréé, garantie 3 ans, livraison rapide.`,
+    description: `Découvrez notre sélection ${title.toLowerCase()} Milwaukee au Luxembourg. Revendeur autorisé, garantie 3 ans, livraison rapide.`,
     alternates: {
       canonical: `https://felten.shop/collections/${handle}`,
     },
     openGraph: {
       title: `${title} Milwaukee — Felten Shop`,
-      description: `${title} Milwaukee. Revendeur agréé au Luxembourg, garantie 3 ans.`,
+      description: `${title} Milwaukee. Revendeur autorisé au Luxembourg, garantie 3 ans.`,
       url: `https://felten.shop/collections/${handle}`,
     },
   };

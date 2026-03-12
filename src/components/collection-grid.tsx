@@ -57,7 +57,7 @@ export function CollectionGrid({ products }: CollectionGridProps) {
               <svg className="w-4 h-4 fill-[#DB021D]" viewBox="0 0 24 24">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
               </svg>
-              <span className="text-[#0A0A0A]">Distributeur Agréé</span>
+              <span className="text-[#0A0A0A]">Distributeur Autorisé</span>
             </div>
             <div className="flex items-center gap-2 text-xs sm:text-sm">
               <svg className="w-4 h-4 fill-[#DB021D]" viewBox="0 0 24 24">

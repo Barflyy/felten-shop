@@ -24,7 +24,7 @@ export const profiles: HubProfile[] = [
   {
     slug: 'florian',
     name: 'Florian Drouven',
-    title: 'Revendeur Agréé Milwaukee',
+    title: 'Revendeur Autorisé Milwaukee',
     company: 'Felten Shop',
     bio: 'Votre expert outillage professionnel Milwaukee au Luxembourg. Conseil personnalisé, garantie 3 ans, livraison rapide.',
     avatar: '/images/team/florian-felten.jpg',

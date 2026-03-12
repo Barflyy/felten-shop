@@ -1092,7 +1092,7 @@ export function CollectionPageContent({
           <span className="w-1 h-1 rounded-full bg-gray-300" />
           <span>SAV Premium</span>
           <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span>Revendeur agréé Milwaukee</span>
+          <span>Revendeur autorisé Milwaukee</span>
         </div>
       </section>
 

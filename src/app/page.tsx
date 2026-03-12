@@ -4,13 +4,13 @@ import { getCollectionProducts } from '@/lib/shopify';
 import type { Product } from '@/lib/shopify/types';
 
 export const metadata: Metadata = {
-  title: 'Felten Shop — Revendeur Agréé Milwaukee au Luxembourg | Outillage Pro',
-  description: 'Votre revendeur agréé Milwaukee au Luxembourg. Gammes M12, M18 et MX FUEL. Perceuses, visseuses, meuleuses, batteries. Garantie 3 ans, SAV local, livraison rapide.',
+  title: 'Felten Shop — Revendeur Autorisé Milwaukee au Luxembourg | Outillage Pro',
+  description: 'Votre revendeur autorisé Milwaukee au Luxembourg. Gammes M12, M18 et MX FUEL. Perceuses, visseuses, meuleuses, batteries. Garantie 3 ans, SAV local, livraison rapide.',
   alternates: {
     canonical: 'https://felten.shop',
   },
   openGraph: {
-    title: 'Felten Shop — Revendeur Agréé Milwaukee au Luxembourg',
+    title: 'Felten Shop — Revendeur Autorisé Milwaukee au Luxembourg',
     description: 'Outillage professionnel Milwaukee. Gammes M12, M18 et MX FUEL. Garantie 3 ans, SAV local.',
     url: 'https://felten.shop',
     type: 'website',

@@ -7,7 +7,7 @@ const MESSAGES = [
   '🚚 Livraison gratuite dès 150€ — Expédition sous 24h',
   '🛡 Garantie 3 ans sur toutes les machines Milwaukee',
   '📞 Besoin d\'aide ? +352 691 000 000',
-  '⚡ Revendeur agréé Milwaukee — SAV collecte & retour inclus',
+  '⚡ Revendeur autorisé Milwaukee — SAV collecte & retour inclus',
 ];
 
 const STORAGE_KEY = 'shopfelten_announcement_dismissed';

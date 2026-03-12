@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Conditions Générales de Vente — Felten Shop',
-  description: 'Conditions générales de vente de Felten Shop, revendeur agréé Milwaukee en Belgique.',
+  description: 'Conditions générales de vente de Felten Shop, revendeur autorisé Milwaukee en Belgique.',
 };
 
 export default async function CGVPage() {

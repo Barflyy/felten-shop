@@ -5,7 +5,7 @@ import { Phone, MapPin, ShieldCheck, Package, Wrench } from 'lucide-react';
 const ITEMS = [
   { icon: Phone, text: 'Florian vous rappelle sous 2h' },
   { icon: MapPin, text: 'SAV physique au Luxembourg' },
-  { icon: ShieldCheck, text: 'Revendeur agree Milwaukee' },
+  { icon: ShieldCheck, text: 'Revendeur autorise Milwaukee' },
   { icon: Package, text: 'Jamais de piece grise' },
   { icon: Wrench, text: 'Panne ? On gere en 48h' },
 ];

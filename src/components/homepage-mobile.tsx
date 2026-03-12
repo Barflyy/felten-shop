@@ -874,7 +874,7 @@ export default function HomePage({ products }: { products: Product[] }) {
                   icon: BadgeCheck,
                   stat: '3 ans',
                   statLabel: 'garantie',
-                  title: 'Revendeur agréé',
+                  title: 'Revendeur autorisé',
                   text: 'Garantie constructeur enregistrée automatiquement sur chaque machine.',
                 },
               ].map((item, i) => {

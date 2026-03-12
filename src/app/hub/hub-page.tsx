@@ -297,7 +297,7 @@ export function HubPage({ profile }: { profile: HubProfile }) {
         {/* ── Footer ── */}
         <div className="mt-8 text-center">
           <p className="text-[11px] text-[#9CA3AF]">
-            Revendeur Agréé Milwaukee — Luxembourg
+            Revendeur Autorisé Milwaukee — Luxembourg
           </p>
         </div>
       </div>

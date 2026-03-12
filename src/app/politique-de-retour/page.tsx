@@ -4,7 +4,7 @@ import { RotateCcw, CheckCircle, Clock, Mail } from 'lucide-react';
 
 export const metadata = {
   title: 'Politique de retour — Felten Shop',
-  description: 'Politique de retour et remboursement de Felten Shop, revendeur agréé Milwaukee en Belgique.',
+  description: 'Politique de retour et remboursement de Felten Shop, revendeur autorisé Milwaukee en Belgique.',
 };
 
 export default function PolitiqueRetourPage() {

@@ -1230,7 +1230,7 @@ function generatePDF(
   doc.text('SHOP FELTEN', margin, 18)
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
-  doc.text('Revendeur Agréé Milwaukee — Luxembourg', margin, 26)
+  doc.text('Revendeur Autorisé Milwaukee — Luxembourg', margin, 26)
   doc.setFontSize(9)
   doc.text('felten.lu  |  +352 621 304 952  |  florian@felten.lu', margin, 33)
 
@@ -1404,7 +1404,7 @@ function generatePDF(
     doc.setTextColor(150, 150, 150)
     doc.setFont('helvetica', 'normal')
     doc.text(
-      'Shop Felten — Revendeur Agréé Milwaukee — felten.lu',
+      'Shop Felten — Revendeur Autorisé Milwaukee — felten.lu',
       margin,
       footerY,
     )

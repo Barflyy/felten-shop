@@ -93,7 +93,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-[12px] text-white/40 leading-relaxed mb-4">
-              Revendeur Agréé Milwaukee au Luxembourg. Garantie 3 ans, SAV premium.
+              Revendeur Autorisé Milwaukee au Luxembourg. Garantie 3 ans, SAV premium.
             </p>
             <ul className="space-y-2">
               <li>
@@ -201,7 +201,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-xs text-white/50 mb-4">
-              Revendeur Agréé Milwaukee au Luxembourg
+              Revendeur Autorisé Milwaukee au Luxembourg
             </p>
             <div className="flex items-center justify-center gap-5">
               <a href="tel:+352621304952" className="flex items-center gap-1.5 text-[12px] text-white/50 hover:text-white transition-colors">
@@ -290,7 +290,7 @@ export function Footer() {
           </div>
           <div className="flex items-center justify-center lg:justify-end lg:ml-auto gap-4">
             <p className="text-[11px] text-white/25 whitespace-nowrap">
-              © 2026 Felten Shop — Revendeur Agréé Milwaukee
+              © 2026 Felten Shop — Revendeur Autorisé Milwaukee
             </p>
             <div className="flex items-center gap-1 border border-white/10 rounded px-2 py-0.5">
               <Globe className="w-3 h-3 text-white/25" strokeWidth={2} />

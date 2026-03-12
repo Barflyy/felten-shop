@@ -4,14 +4,14 @@ import { ArrowLeft, ShieldCheck, Award, Zap, Users, Package, Clock, HeartHandsha
 import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: 'À propos — Felten Shop | Revendeur Agréé Milwaukee Luxembourg',
-  description: 'Découvrez Felten Shop, revendeur agréé Milwaukee au Luxembourg. Notre équipe de passionnés vous accompagne dans le choix de votre outillage professionnel.',
+  title: 'À propos — Felten Shop | Revendeur Autorisé Milwaukee Luxembourg',
+  description: 'Découvrez Felten Shop, revendeur autorisé Milwaukee au Luxembourg. Notre équipe de passionnés vous accompagne dans le choix de votre outillage professionnel.',
   alternates: { canonical: 'https://felten.shop/a-propos' },
 };
 
 const STATS = [
   { value: '5K+', label: 'Clients satisfaits', icon: <Users className="w-5 h-5" strokeWidth={2} /> },
-  { value: '100%', label: 'Agréé Milwaukee', icon: <Award className="w-5 h-5" strokeWidth={2} /> },
+  { value: '100%', label: 'Autorisé Milwaukee', icon: <Award className="w-5 h-5" strokeWidth={2} /> },
   { value: '24h', label: 'Expédition rapide', icon: <Clock className="w-5 h-5" strokeWidth={2} /> },
   { value: '3 ans', label: 'Garantie incluse', icon: <ShieldCheck className="w-5 h-5" strokeWidth={2} /> },
 ];
@@ -118,7 +118,7 @@ export default function AProposPage() {
                 <Award className="w-6 h-6 text-white" strokeWidth={2} />
               </div>
               <h3 className="text-[18px] font-bold text-white mb-3">
-                Revendeur agréé
+                Revendeur autorisé
               </h3>
               <p className="text-white/50 text-[14px] mb-8 leading-relaxed">
                 En achetant chez nous, vous avez la garantie d&apos;un produit authentique et d&apos;une couverture complète par le réseau Milwaukee.

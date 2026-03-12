@@ -32,7 +32,7 @@ const STEPS = [
     number: '03',
     icon: <Wrench className="w-5 h-5" strokeWidth={2} />,
     title: 'Réparation',
-    desc: 'Votre outil est pris en charge par un centre agréé Milwaukee. Délai : 5 à 10 jours ouvrés.',
+    desc: 'Votre outil est pris en charge par un centre autorisé Milwaukee. Délai : 5 à 10 jours ouvrés.',
   },
   {
     number: '04',
@@ -142,7 +142,7 @@ export default function GarantiePage() {
               La promesse Milwaukee
             </h2>
             <p className="text-[14px] text-[#6B7280] leading-relaxed max-w-2xl mx-auto">
-              Milwaukee Tool conçoit des outils pour durer. En tant que revendeur agréé, Felten Shop vous assure l&apos;authenticité et une prise en charge complète.
+              Milwaukee Tool conçoit des outils pour durer. En tant que revendeur autorisé, Felten Shop vous assure l&apos;authenticité et une prise en charge complète.
             </p>
           </div>
 

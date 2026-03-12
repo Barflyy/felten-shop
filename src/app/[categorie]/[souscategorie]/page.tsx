@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props) {
 
   return {
     title: `${subTitle} — ${parentTitle} | Felten Shop`,
-    description: `Découvrez notre sélection ${subTitle.toLowerCase()} Milwaukee. Revendeur agréé, garantie 3 ans.`,
+    description: `Découvrez notre sélection ${subTitle.toLowerCase()} Milwaukee. Revendeur autorisé, garantie 3 ans.`,
   };
 }
 

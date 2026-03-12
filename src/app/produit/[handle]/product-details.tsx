@@ -514,7 +514,7 @@ export function ProductDetails({
                   <div className="flex items-center gap-1.5">
                     <ShieldCheck className="w-3.5 h-3.5 text-[#DB021D]" strokeWidth={2} />
                     <span className="text-[11px] font-semibold text-[#6B7280]">
-                      Revendeur agree Milwaukee — Garantie 3 ans
+                      Revendeur autorise Milwaukee — Garantie 3 ans
                     </span>
                   </div>
                   {isAvailable && (

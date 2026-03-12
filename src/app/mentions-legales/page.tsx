@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Mentions Légales — Felten Shop',
-  description: 'Mentions légales du site Felten Shop, revendeur agréé Milwaukee au Luxembourg.',
+  description: 'Mentions légales du site Felten Shop, revendeur autorisé Milwaukee au Luxembourg.',
 };
 
 export default function MentionsLegalesPage() {
@@ -85,7 +85,7 @@ export default function MentionsLegalesPage() {
               </p>
               <p>
                 La marque <strong className="text-[#1A1A1A]">Milwaukee Tool</strong> et ses visuels sont la
-                propriété de Milwaukee Electric Tool Corporation. Felten Shop est un revendeur agréé et utilise
+                propriété de Milwaukee Electric Tool Corporation. Felten Shop est un revendeur autorisé et utilise
                 ces éléments dans le cadre de son activité commerciale autorisée.
               </p>
             </div>

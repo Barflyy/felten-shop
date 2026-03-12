@@ -15,7 +15,7 @@ import {
 import { Footer } from '@/components/footer';
 
 export const metadata = {
-  title: 'Pourquoi Felten ? — Revendeur Agree Milwaukee | Felten Shop',
+  title: 'Pourquoi Felten ? — Revendeur Autorise Milwaukee | Felten Shop',
   description:
     "Pourquoi acheter chez Felten plutot qu'ailleurs ? SAV physique, conseil expert, garantie reelle. Decouvrez la difference.",
 };

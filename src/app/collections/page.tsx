@@ -27,7 +27,7 @@ export default async function CollectionsPage() {
         <section className="bg-[#F5F5F5] border-b border-gray-100">
           <div className="max-w-[1280px] mx-auto px-5 lg:px-8 pt-24 lg:pt-28 pb-8 lg:pb-12">
             <span className="inline-flex items-center px-3 py-1 bg-[#DB021D]/10 text-[#DB021D] text-[11px] font-semibold rounded-lg mb-3">
-              Revendeur Agree Milwaukee
+              Revendeur Autorise Milwaukee
             </span>
             <h1 className="text-[24px] lg:text-[32px] font-bold text-[#1A1A1A] mb-2">
               Notre catalogue
@@ -114,7 +114,7 @@ export default async function CollectionsPage() {
                 { icon: Truck, title: 'Livraison 24h', desc: 'Expedition rapide' },
                 { icon: ShieldCheck, title: 'Garantie 3 ans', desc: 'Pieces et main d\'oeuvre' },
                 { icon: Headset, title: 'Conseil expert', desc: 'Equipe specialisee' },
-                { icon: Award, title: 'Revendeur agree', desc: 'Milwaukee officiel' },
+                { icon: Award, title: 'Revendeur autorise', desc: 'Milwaukee officiel' },
               ].map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-lg bg-white border border-gray-100 flex items-center justify-center shrink-0">
