@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { Footer } from '@/components/footer';
 import { useCart } from '@/context/cart-context';
 import type { Product } from '@/lib/shopify/types';
 
@@ -10,13 +9,14 @@ import type { Product } from '@/lib/shopify/types';
 import SiteHeader from '@/components/SiteHeader';
 import HeroSection from './HeroSection';
 import TrustMarquee from './TrustMarquee';
-import EcosystemNav from './EcosystemNav';
-import BestsellerCarousel from './BestsellerCarousel';
-import WhyFeltenSection from './WhyFeltenSection';
 
 // Below-fold sections: lazy-loaded to reduce initial JS bundle
-const NewsletterSection = dynamic(() => import('./NewsletterSection'), { ssr: true });
-const ReviewSection = dynamic(() => import('./ReviewSection'), { ssr: true });
+const EcosystemNav = dynamic(() => import('./EcosystemNav'));
+const BestsellerCarousel = dynamic(() => import('./BestsellerCarousel'));
+const WhyFeltenSection = dynamic(() => import('./WhyFeltenSection'));
+const NewsletterSection = dynamic(() => import('./NewsletterSection'));
+const ReviewSection = dynamic(() => import('./ReviewSection'));
+const Footer = dynamic(() => import('@/components/footer').then(m => m.Footer));
 
 const FloatingBadge = dynamic(() => import('./FloatingBadge'), { ssr: false });
 

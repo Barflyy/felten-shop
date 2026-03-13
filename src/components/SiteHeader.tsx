@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { useCart } from '@/context/cart-context';
 import HomepageHeader from '@/components/homepage/HomepageHeader';
-import MobileMenu from '@/components/mobile/MobileMenu';
-import SearchOverlay from '@/components/homepage/SearchOverlay';
 import { useSearchOverlay } from '@/components/homepage/hooks/useSearchOverlay';
+
+const MobileMenu = dynamic(() => import('@/components/mobile/MobileMenu'), { ssr: false });
+const SearchOverlay = dynamic(() => import('@/components/homepage/SearchOverlay'), { ssr: false });
 
 export default function SiteHeader() {
   const { cart, openCart } = useCart();
