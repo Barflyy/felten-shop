@@ -25,7 +25,7 @@ export default function HeroSection() {
 
         <div className="relative w-[60%] max-w-[240px] aspect-square mb-6">
           <Image
-            src="/images/m18-fuel-drill.png"
+            src="/images/m18-fuel-drill.webp"
             alt="Milwaukee M18 FUEL"
             fill
             className="object-contain"
@@ -94,7 +94,7 @@ export default function HeroSection() {
             <div className="w-[50%] relative flex items-center justify-center pl-8">
               <div className="relative w-[90%] aspect-square">
                 <Image
-                  src="/images/m18-fuel-drill.png"
+                  src="/images/m18-fuel-drill.webp"
                   alt="Milwaukee M18 FUEL"
                   fill
                   className="object-contain"

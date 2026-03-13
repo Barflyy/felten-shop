@@ -22,10 +22,6 @@ export default function CategoryGrid() {
   return (
     <section className="py-8 lg:py-16 bg-white">
       <div className="max-w-[1280px] mx-auto px-4 lg:px-8">
-        <h2 className="text-[18px] lg:text-[26px] font-bold text-[#1A1A1A] text-center mb-5 lg:mb-10">
-          Notre catalogue
-        </h2>
-
         <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-3 lg:auto-rows-[200px]">
           {CATEGORIES.map((cat, idx) => (
             <div key={cat.handle} className={getBentoClass(cat.bentoSize)}>

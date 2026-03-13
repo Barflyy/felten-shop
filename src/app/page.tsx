@@ -19,10 +19,10 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const [percage, scies, meuleuses, batteries] = await Promise.all([
-    getCollectionProducts({ collection: 'percage-et-burinage' }),
-    getCollectionProducts({ collection: 'sciage-et-decoupage' }),
-    getCollectionProducts({ collection: 'meuleuses-et-polisseuses' }),
-    getCollectionProducts({ collection: 'batteries-chargeurs-et-generateurs' }),
+    getCollectionProducts({ collection: 'percage-et-burinage', first: 8 }),
+    getCollectionProducts({ collection: 'sciage-et-decoupage', first: 8 }),
+    getCollectionProducts({ collection: 'meuleuses-et-polisseuses', first: 8 }),
+    getCollectionProducts({ collection: 'batteries-chargeurs-et-generateurs', first: 8 }),
   ]);
 
   // Merge and deduplicate to ensure all filter tabs have products

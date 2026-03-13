@@ -11,7 +11,6 @@ import SiteHeader from '@/components/SiteHeader';
 import HeroSection from './HeroSection';
 import TrustMarquee from './TrustMarquee';
 import EcosystemNav from './EcosystemNav';
-import CategoryGrid from './CategoryGrid';
 import BestsellerCarousel from './BestsellerCarousel';
 import WhyFeltenSection from './WhyFeltenSection';
 
@@ -59,7 +58,6 @@ export default function HomePage({ products }: { products: Product[] }) {
         <NewsletterSection />
         <WhyFeltenSection />
         <ReviewSection />
-        <CategoryGrid />
       </main>
 
       <Footer />

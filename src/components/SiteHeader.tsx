@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useScroll, useMotionValueEvent } from 'framer-motion';
 import { useCart } from '@/context/cart-context';
 import HomepageHeader from '@/components/homepage/HomepageHeader';
 import MobileMenu from '@/components/mobile/MobileMenu';
@@ -13,16 +12,18 @@ export default function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [headerScrolled, setHeaderScrolled] = useState(false);
 
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    // Hysteresis: scroll down past 80 to collapse, scroll back up past 40 to expand
-    // Prevents flickering when scroll position hovers around the threshold
-    setHeaderScrolled((prev) => {
-      if (!prev && latest > 80) return true;
-      if (prev && latest < 40) return false;
-      return prev;
-    });
-  });
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setHeaderScrolled((prev) => {
+        if (!prev && y > 80) return true;
+        if (prev && y < 40) return false;
+        return prev;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const {
     searchOpen,

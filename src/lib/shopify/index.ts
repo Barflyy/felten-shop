@@ -186,8 +186,10 @@ export async function getAllProducts(): Promise<Product[]> {
 
 export async function getCollectionProducts({
   collection,
+  first,
 }: {
   collection: string;
+  first?: number;
 }): Promise<Product[]> {
   try {
     // Si collection est "all", récupérer tous les produits
@@ -198,11 +200,12 @@ export async function getCollectionProducts({
     const allProducts: Product[] = [];
     let hasNextPage = true;
     let cursor: string | null = null;
+    const pageSize = first || 250;
 
     while (hasNextPage) {
       const response: CollectionResponse = await shopifyFetch<CollectionResponse>({
         query: COLLECTION_BY_HANDLE_QUERY,
-        variables: { handle: collection, first: 250, after: cursor },
+        variables: { handle: collection, first: pageSize, after: cursor },
         tags: [`collection-${collection}`, 'collections'],
       });
 
@@ -212,6 +215,11 @@ export async function getCollectionProducts({
 
       const products = response.collection.products.edges.map((edge: ProductEdge) => reshapeProduct(edge.node));
       allProducts.push(...products);
+
+      // If a limit was specified, don't paginate
+      if (first) {
+        break;
+      }
 
       hasNextPage = response.collection.products.pageInfo.hasNextPage;
       cursor = response.collection.products.pageInfo.endCursor;
